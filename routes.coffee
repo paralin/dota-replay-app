@@ -1,10 +1,16 @@
+Router.onBeforeAction ->
+  # all properties available in the route function
+  # are also available here such as this.params
+  unless Meteor.userId()
+    # if the user is not logged in, render the Login template
+    @render "LoginSplash"
+  else
+    # otherwise don't hold up the rest of hooks or our route/action function
+    # from running
+    @next()
+  return
+
 Router.route "/", ->
-    @render "Home"
-    return
-Router.route "/submissions", ->
     @layout "PanelLayout"
     @render "Submissions"
-    return
-Router.route "/submissions/new", ->
-    @render "NewSubmission"
     return
