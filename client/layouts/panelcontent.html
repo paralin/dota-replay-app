@@ -1,0 +1,24 @@
+<template name="PanelContent">
+<!-- start:Content -->
+<div class="page-content">
+    <div class="container-fluid">
+
+        {{> yield}}
+
+    </div>
+
+    <!-- start:Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-4">
+                &copy; 2014 <a href="#">{{_ "copyright_name"}}</a>
+            </div>
+            <div class="col-lg-8">
+                <p class="pull-right">Site and system by <a href="http://paral.in" target="_blank">{{_ "author_name"}}</a>.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- end:Footer -->
+</div>
+<!--end:Content-->
+</template>

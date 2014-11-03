@@ -1,0 +1,52 @@
+<template name="PanelTopNav">
+<!-- start:Top Nav -->
+<div class="top-navbar">
+    <div class="top-navbar-inner">
+        <!-- start:Logo Brand -->
+        <div class="logo-brand">
+            <a href="index.html"><i class="fa fa-fast-backward"></i> {{_ "title"}}</a>
+        </div>
+        <!-- end:Logo Brand -->
+
+        <div class="top-nav-content">
+            <!-- start:Button Sidebar Left Toggle -->
+            <div class="btn-collapse-sidebar-left">
+                <i class="fa fa-bars icon-dinamic"></i>
+            </div>
+            <!-- start:Button sidebar left toggle -->
+
+            <!-- start:button sidebar right toggle -->
+            <div class="btn-collapse-sidebar-right">
+                <i class="fa fa-sliders"></i>
+            </div>
+            <!-- end:button sidebar right toggle -->
+
+            <!-- start:button nav toggle -->
+            <div class="btn-collapse-nav" data-toggle="collapse" data-target="#main-fixed-nav">
+                <i class="fa fa-plus icon-plus"></i>
+            </div>
+            <!-- end:button nav toggle -->
+
+            <!-- start:user session nav -->
+            <ul class="nav-user navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img src="assets/img/avatar/avatar-1.jpg" class="avatar img-circle" alt="Avatar">
+                    </a>
+                    <ul class="dropdown-menu square primary margin-list-rounded with-triangle">
+                        <li><a href="#">Account setting</a></li>
+                        <li><a href="#">Payment setting</a></li>
+                        <li><a href="#">Change password</a></li>
+                        <li><a href="#">My public profile</a></li>
+                        <li class="divider"></li>
+                        <li><a href="lock-screen.html">Lock screen</a></li>
+                        <li><a href="login.html">Log out</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- end:user session nav -->
+        </div>
+    </div>
+</div>
+<!-- end:Top Nav -->
+</template>

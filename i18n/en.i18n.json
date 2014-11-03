@@ -1,5 +1,7 @@
 {
     "title": "DOTA Replay",
     "splash": "REPLAY",
-    "sign_in_with_steam": "Sign in with Steam"
+    "sign_in_with_steam": "Sign in with Steam",
+    "copyright_name": "DOTAReplay",
+    "author_name": "QUΛИТUM"
 }
