@@ -1,0 +1,24 @@
+<template name="ShowList">
+<ol class="breadcrumb">
+    <li><a href="/"><i class="fa fa-home"></i> Dashboard</a></li>
+    <li><a href="/shows/"><i class="fa fa-youtube-play"></i> Shows</a></li>
+</ol>
+
+<div class="row">
+    <div class="col-md-12">
+        {{#each shows}}
+        <div class="jumbotron jumbotron-square">
+            <div class="jumboThumb" style="background-image: url({{thumbnail}})"></div>
+            <div class="jumboCont">
+                <h1>{{name}}</h1>
+                <p style="min-height: 50px">{{description}}</p>
+                <p>
+                <a class="btn btn-primary btn-lg" role="button">Show Detail</a>
+                <a class="btn btn-info btn-lg" role="button">Submit a Clip</a>
+                </p>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+</template>

@@ -3,21 +3,17 @@
 <div class="sidebar-left sidebar-nicescroller">
     <ul class="sidebar-menu">
         <li class="static">MENU</li>
-        <li><a href="index.html"><i class="fa fa-dashboard icon-sidebar"></i>Dashboard</a></li>
+        <li><a href="/"><i class="fa fa-dashboard icon-sidebar"></i>Overview</a></li>
         <li>
-            <a href="#">
-                <i class="fa fa-toggle-on icon-sidebar"></i>
+            <a href="/shows">
+                <i class="fa fa-youtube-play icon-sidebar"></i>
                 <i class="fa fa-angle-right chevron-icon-sidebar"></i>
-                Layout Colors
+                Shows
             </a>
             <ul class="submenu">
-                <li><a href="layout-purple.html">Purple</a></li>
-                <li><a href="layout-yellow.html">Yellow</a></li>
-                <li><a href="layout-brown.html">Brown</a></li>
-                <li><a href="layout-red.html">Red</a></li>
-                <li><a href="layout-green.html">Green</a></li>
-                <li><a href="layout-disapear.html">Disapear</a></li>
-                <li><a href="layout-pysical.html">Pysical</a></li>
+                {{#each shows}}
+                <li><a href="/shows/{{_id}}">{{name}}</a></li>
+                {{/each}}
             </ul>
         </li>
         <li>

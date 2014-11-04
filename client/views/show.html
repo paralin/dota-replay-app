@@ -1,0 +1,290 @@
+<template name="ShowDetail">
+<ol class="breadcrumb">
+    <li><a href="/"><i class="fa fa-home"></i> Dashboard</a></li>
+    <li><a href="/shows/"><i class="fa fa-youtube-play"></i> Shows</a></li>
+    <li class="active"><i class="fa fa-video-camera"></i> {{name}}</li>
+</ol>
+<!-- start:vektor map and sosmed -->
+<div class="row">
+    <div class="col-lg-5">
+        <div class="row site-information-2">
+            <div class="col-md-6">
+                <div class="panel">
+                    <div class="panel-heading bg-facebook text-center">
+                        <a href="#">
+                            <i class="fa fa-facebook fa-3x"></i>
+                        </a>
+                    </div>
+                    <div class="padder-v text-center clearfix">
+                        <div class="col-xs-6">
+                            <div class="h3 font-bold">42k</div>
+                            <small class="text-muted">Friends</small>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="h3 font-bold">90</div>
+                            <small class="text-muted">Feeds</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading bg-twitter text-center">
+                        <a href="#">
+                            <i class="fa fa-twitter fa-3x"></i>
+                        </a>
+                    </div>
+                    <div class="padder-v text-center clearfix">
+                        <div class="col-sm-6 col-lg-6 col-md-6">
+                            <div class="h3 font-bold">27k</div>
+                            <small class="text-muted">Tweets</small>
+                        </div>
+                        <div class="col-sm-6 col-lg-6 col-md-6">
+                            <div class="h3 font-bold">15k</div>
+                            <small class="text-muted">Followers</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel">
+                    <div class="panel-heading bg-google-plus text-center">
+                        <a href="#">
+                            <i class="fa fa-google-plus fa-3x"></i>
+                        </a>
+                    </div>
+                    <div class="padder-v text-center clearfix">
+                        <div class="col-xs-6">
+                            <div class="h3 font-bold">42k</div>
+                            <small class="text-muted">Friends</small>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="h3 font-bold">90</div>
+                            <small class="text-muted">Feeds</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading bg-dribbble text-center">
+                        <a href="#">
+                            <i class="fa fa-dribbble fa-3x"></i>
+                        </a>
+                    </div>
+                    <div class="padder-v text-center clearfix">
+                        <div class="col-xs-6">
+                            <div class="h3 font-bold">27k</div>
+                            <small class="text-muted">Tweets</small>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="h3 font-bold">15k</div>
+                            <small class="text-muted">Followers</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end:vektor map and sosmed -->
+
+<!-- start:statistic -->
+<div class="col-lg-12 flot-index">
+    <div class="row">
+        <div class="col-sm-6">
+            <section>
+                <header class="font-bold padder-v">
+                    <div class="pull-right">
+                        <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-sm btn-rounded btn-default dropdown-toggle">
+                                <span class="dropdown-label">Week</span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-select">
+                                <li><a href="#"><input type="radio" name="b">Month</a></li>
+                                <li><a href="#"><input type="radio" name="b">Week</a></li>
+                                <li><a href="#"><input type="radio" name="b">Day</a></li>
+                            </ul>
+                        </div>
+                        <a href="#" class="btn btn-default btn-icon btn-rounded btn-sm">Go</a>
+                    </div>
+                    Statistics
+                </header>
+                <div class="panel-body">
+                    <div id="flot-sp1ine" style="height:210px"></div>
+                </div>
+                <div class="row text-center">
+                    <div class="col-xs-3">
+                        <span class="h4">5,860</span><br>
+                        <small>Orders</small>
+                    </div>
+                    <div class="col-xs-3">
+                        <span class="h4">10,450</span><br>
+                        <small>Sellings</small>
+                    </div>
+                    <div class="col-xs-3">
+                        <span class="h4">21,230</span><br>
+                        <small>Items</small>
+                    </div>
+                    <div class="col-xs-3">
+                        <span class="h4">7,230</span><br>
+                        <small>Customers</small>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="col-sm-6">
+            <section>
+                <header class="font-bold padder-v">
+                    <div class="btn-group pull-right">
+                        <button data-toggle="dropdown" class="btn btn-sm btn-rounded btn-default dropdown-toggle">
+                            <span class="dropdown-label">Last 24 Hours</span>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-select">
+                            <li><a href="#"><input type="radio" name="a">Today</a></li>
+                            <li><a href="#"><input type="radio" name="a">Yesterday</a></li>
+                            <li><a href="#"><input type="radio" name="a">Last 24 Hours</a></li>
+                            <li><a href="#"><input type="radio" name="a">Last 7 Days</a></li>
+                            <li><a href="#"><input type="radio" name="a">Last 30 days</a></li>
+                            <li><a href="#"><input type="radio" name="a">Last Month</a></li>
+                            <li><a href="#"><input type="radio" name="a">All Time</a></li>
+                        </ul>
+                    </div>
+                    Analysis
+                </header>
+                <div class="panel-body flot-legend">
+                    <div id="flot-pie-donut"  style="height:240px"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!-- end:statistic -->
+
+<!-- start:table product -->
+<div class="row">
+    <div class="col-md-12">
+        <!--Table Wrapper Start-->
+        <div class="table-responsive ls-table">
+            <table class="table table-bordered table-striped table-responsive">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Info</th>
+                        <th>Progress</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Wordpress design</td>
+                        <td>Lorem ipsum dolor sit amet, dae rem ut, voluptates?</td>
+                        <td class="ls-table-progress">
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuetransitiongoal="50" aria-valuenow="50" style="width: 50%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="label label-warning">Pending</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Joombla design</td>
+                        <td>Ha iki Joombla Lorem ipsum dolor sit amet</td>
+                        <td class="ls-table-progress">
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuetransitiongoal="90" aria-valuenow="90" style="width: 90%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="label label-light-green">On Way</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>PSD Theme</td>
+                        <td>Nek sing saiki lorem ipsum dolor sit amet</td>
+                        <td class="ls-table-progress">
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuetransitiongoal="80" aria-valuenow="80" style="width: 80%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="label label-warning">Pending</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>HTML Templates</td>
+                        <td>Html templates kie rodo angel jarene tapi yo mbuh</td>
+
+                        <td class="ls-table-progress">
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuetransitiongoal="80" aria-valuenow="80" style="width: 80%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="label label-red">Error</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Graphic Design</td>
+                        <td>Lorem ipsum dolor sit amet</td>
+
+                        <td class="ls-table-progress">
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuetransitiongoal="70" aria-valuenow="70" style="width: 70%;"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="label label-light-green">On Way</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Plugin</td>
+                        <td>Plugin iki lorem ipsum dolor sit amet</td>
+
+                        <td class="ls-table-progress">
+                            <div class="progress progress-striped active">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuetransitiongoal="90" aria-valuenow="90" style="width: 90%;"></div>
+                            </div>
+                        </td>
+                        <td><span class="label label-success">Successfull</span></td>
+                        <td>
+                            <button class="btn btn-xs btn-info"><i class="fa fa-eye"></i></button>
+                            <button class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+        <!--Table Wrapper Finish-->
+    </div>
+</div>
+<!-- end:table product-->
+</template>
