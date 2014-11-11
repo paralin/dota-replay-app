@@ -1,0 +1,42 @@
+<template name="submissionList">
+<div class="invoice-body">
+    <div class="row">
+        {{#unless hasSubmissions}}
+        <h3 class="col-md-4" style="margin-bottom:50px;margin-left: auto;margin-right:auto">You have not submitted any clips.</h3>
+        {{else}}
+        <div class="col-md-12" id="unseen">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Ep</th>
+                        <th>Title</th>
+                        <th class="hidden-phone">Description</th>
+                        <th class="">Match ID</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each this}}
+                    <tr>
+                        <td>{{episode}}</td>
+                        <td>{{name}}</td>
+                        <td class="hidden-phone">{{description}}</td>
+                        <td class="">{{matchid}}</td>
+                        <td style="width: 200px">
+                            <i class="fa fa-spin fa-refresh"></i>
+                            Downloading Replay
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4 col-lg-4 col-sm-8 col-xs-12 pull-right">
+            <ul>
+                <li>Total Submissions: {{submissionCount}}</li>
+            </ul>
+        </div>
+        {{/unless}}
+    </div>
+</div>
+</template>

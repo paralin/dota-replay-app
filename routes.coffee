@@ -15,6 +15,15 @@ Router.route "/", ->
     @render "Submissions"
     return
 
+Router.route "/submit/:_id", ->
+    id = @params._id
+    @layout "PanelLayout"
+    @render "ShowSubmit",
+        data: ->
+            Shows.findOne
+                _id: id
+    return
+
 Router.route "/shows/:_id", ->
     id = @params._id
     @layout "PanelLayout"

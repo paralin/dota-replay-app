@@ -9,6 +9,10 @@
     "nicescroll": "~3.5.6",
     "slimscroll": "~1.3.3",
     "jquery-backstretch": "~2.0.4",
-    "font-awesome": "~4.2.0"
+    "font-awesome": "~4.2.0",
+    "jasny-bootstrap": "~3.1.3",
+    "sweetalert": "~0.3.1",
+    "moment": "~2.8.3",
+    "components-font-awesome": "~4.2.0"
   }
 }
