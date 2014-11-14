@@ -13,6 +13,7 @@
                         <th class="hidden-phone">Description</th>
                         <th class="">Match ID</th>
                         <th>Status</th>
+                        <th style="width: 15px"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,6 +26,9 @@
                         <td style="width: 200px">
                             <i class={{iconClass}}></i>
                             {{replayStatus status}}
+                        </td>
+                        <td>
+                            <button class="subDel btn btn-xs btn-danger" disabled={{cannotDelete}}><i class="fa fa-trash-o"></i></button>
                         </td>
                     </tr>
                     {{/each}}

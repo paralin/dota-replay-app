@@ -17,6 +17,7 @@ SubmissionSchema = new SimpleSchema
         min: 1000000000
         max: 9999999999
         denyUpdate: true
+        unique: true
     show:
         type: String
         label: "Show ID"

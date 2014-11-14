@@ -1,3 +1,9 @@
+Template.ShowSubmit.helpers
+    "disabled": ->
+      disabled = false
+      subCount = Submissions.find {show: @_id, status: {$lt: 3}}
+      count = subCount.count()
+      not @submissionsOpen or count >= @maxSubmissions
 Template.ShowSubmit.rendered = ->
     $(".form-horizontal")
         .bootstrapValidator

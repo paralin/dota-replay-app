@@ -3,7 +3,7 @@ Router.onBeforeAction ->
   # are also available here such as this.params
   unless Meteor.userId()
     # if the user is not logged in, render the Login template
-    @render "LoginSplash"
+    @render "Login"
   else
     # otherwise don't hold up the rest of hooks or our route/action function
     # from running

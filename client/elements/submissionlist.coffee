@@ -1,3 +1,14 @@
+Template.submissionList.events
+    "click .subDel": ->
+        return if @status is 1 or (@status > 2 and @status isnt 5)
+        Submissions.remove {_id: @_id}, (err)->
+            if err?
+                swal({type: "error", title: "Can't Delete Submission", text: err.reason})
+            else
+                swal
+                    type: "success"
+                    title: "Submission Deleted"
+                    text: "The submission has been deleted."
 Template.submissionList.helpers
     "hasSubmissions": ->
         @? && @.length > 0
@@ -27,3 +38,5 @@ Template.submissionList.helpers
             "fa fa-trash"
         else
             "fa fa-exclamation-triangle"
+    "cannotDelete": ->
+        @status is 1 or (@status > 2 and @status isnt 5)

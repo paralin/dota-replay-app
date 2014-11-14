@@ -1,16 +1,21 @@
-<template name="LoginSplash">
-<div id="splash">
-    <div class="splashImage"></div>
-    <!--<div class="splashText">{{_ "splash"}}</div>-->
-    <div class="splashText">
-        <i class="mdi-av-play-circle-outline"></i>
-        {{_ "splash"}}
-    </div>
-    <div class="splashButtons">
-        <button class="btn btn-success" id="steam_signin_button">
-            <i class="fa fa-steam"></i>
-            <span>{{_ "sign_in_with_steam"}}</span>
-        </button>
+<template name="Submissions">
+<div class="row invoice">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="invoice-main">
+                <div class="invoice-head">
+                    <div class="text-center">
+                        <h1><strong>Your Submissions</strong></h1>
+                    </div>
+                </div>
+                {{>submissionList submissions}}
+                <div class="invoice-footer">
+                    <div class="text-center">
+                        <b>Go to the <a href="/shows">shows list</a> to submit a clip.</b>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </template>
