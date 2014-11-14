@@ -4,8 +4,6 @@
 # but you can also edit it by hand.
 
 meteor-platform
-autopublish
-insecure
 coffeescript
 iron:router
 less
@@ -18,4 +16,5 @@ aldeed:collection2
 zimme:iron-router-active
 rgoomar:bootstrap-validator
 kidovate:bower
-
+alanning:roles
+reywood:publish-composite

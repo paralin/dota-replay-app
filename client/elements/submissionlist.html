@@ -17,14 +17,14 @@
                 </thead>
                 <tbody>
                     {{#each this}}
-                    <tr>
+                    <tr class={{rowClass}}>
                         <td>{{episode}}</td>
                         <td>{{name}}</td>
                         <td class="hidden-phone">{{description}}</td>
                         <td class="">{{matchid}}</td>
                         <td style="width: 200px">
-                            <i class="fa fa-spin fa-refresh"></i>
-                            Downloading Replay
+                            <i class={{iconClass}}></i>
+                            {{replayStatus status}}
                         </td>
                     </tr>
                     {{/each}}

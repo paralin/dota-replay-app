@@ -12,5 +12,18 @@ ShowSchema = new SimpleSchema
         type: String
         label: "Description"
         min: 10
+    requirements:
+        type: [String]
+        label: "Requirements for submissions"
+    createdAt:
+      type: Date
+      autoValue: ->
+        if @isInsert
+          new Date
+        else if @isUpsert
+          $setOnInsert: new Date
+        else
+          @unset()
+        return
 
 Shows.attachSchema ShowSchema
