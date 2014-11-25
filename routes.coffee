@@ -1,7 +1,7 @@
 Router.onBeforeAction ->
   # all properties available in the route function
   # are also available here such as this.params
-  unless Meteor.userId()
+  if Meteor.isClient and !Meteor.userId()?
     # if the user is not logged in, render the Login template
     @render "Login"
   else
@@ -11,28 +11,28 @@ Router.onBeforeAction ->
   return
 
 Router.route "/", ->
-    @layout "PanelLayout"
-    @render "Submissions"
-    return
+  @layout "PanelLayout"
+  @render "Submissions"
+  return
 
 Router.route "/submit/:_id", ->
-    id = @params._id
-    @layout "PanelLayout"
-    @render "ShowSubmit",
-        data: ->
-            Shows.findOne
-                _id: id
-    return
+  id = @params._id
+  @layout "PanelLayout"
+  @render "ShowSubmit",
+    data: ->
+      Shows.findOne
+        _id: id
+  return
 
 Router.route "/shows/:_id", ->
-    id = @params._id
-    @layout "PanelLayout"
-    @render "ShowDetail",
-        data: ->
-            Shows.findOne
-                _id: id
-    return
+  id = @params._id
+  @layout "PanelLayout"
+  @render "ShowDetail",
+    data: ->
+    Shows.findOne
+      _id: id
+  return
 
 Router.route "/shows", ->
-    @layout "PanelLayout"
-    @render "ShowList"
+  @layout "PanelLayout"
+  @render "ShowList"
