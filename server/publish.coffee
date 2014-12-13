@@ -14,15 +14,3 @@ Meteor.publish null, ->
     fields:
       profile: 1
       "services.steam.avatar": 1
-
-Meteor.publishComposite "clientdata", ->
-  find: ->
-    Shows.find()
-  children: [
-    {
-      find: (show)->
-        Submissions.find
-          show: show._id
-          uid: @userId
-    }
-  ]
