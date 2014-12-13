@@ -22,9 +22,6 @@ SubmissionSchema = new SimpleSchema
         type: String
         label: "Show ID"
         index: true
-    episode:
-        type: Number
-        label: "Optional episode # it was used in"
     #
     # 0: Submitted to replay server
     # 1: Being fetched by replay server
