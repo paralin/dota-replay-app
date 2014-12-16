@@ -4,6 +4,19 @@
     <ul class="sidebar-menu">
         <li class="static">MENU</li>
         <li><a href="/"><i class="fa fa-dashboard icon-sidebar"></i>Overview</a></li>
+        <li class="{{#unless hasShows}}display-none{{/unless}}">
+            <a>
+                <i class="fa fa-youtube-play icon-sidebar"></i>
+                <i class="fa fa-angle-right chevron-icon-sidebar"></i>
+                Shows
+            </a>
+            <ul class="submenu">
+                <li class="{{isActiveShowList}}"><a href="/shows">Full List</a></li>
+                {{#each shows}}
+                <li class="{{isActiveShowDetail}}"><a href="/shows/{{_id}}">{{name}}</a></li>
+                {{/each}}
+            </ul>
+        </li>
     </ul>
 </div>
 <!-- end:Sidebar Left -->
