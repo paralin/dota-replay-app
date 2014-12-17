@@ -1,7 +1,40 @@
 throwErr = (resp, code, descrip)->
-  resp.writeHead code, {}
+  resp.writeHead code
   resp.end JSON.stringify
-    code: code
-    err: descrip
+    error: descrip
+    status: code
+    data: null
 
-#Todo: implement new API
+verifyToken = (request)->
+  #todo: Actually verify
+  true
+
+submission = ["name", "description", "matchid", "show", "uid"]
+submissiont = [typeof(""), typeof(""), typeof(0), typeof(""), typeof("")]
+
+Router.route('/api/submissions/create', { where: 'server' })
+  .post ->
+    return unless verifyToken @request
+    sub = _.pick @request.body, submission
+    for k in submission
+      if !sub[k]?
+        throwErr @response, 403, "You are missing #{k} on your submission."
+        return
+      typ = submissiont[submission.indexOf(k)]
+      if typeof(sub[k]) isnt typ
+        throwErr @response, 403, "The submission property #{k} should be a #{typ}."
+        return
+    show = Shows.findOne {_id: sub.show}
+    if !show?
+      throwErr @response, 403, "The show #{sub.show} does not exist."
+      return
+    Submissions.insert sub, (err)=>
+      if err?
+        throwErr @response, 403, err.sanitizedError.reason
+        return
+      else
+        @response.writeHead 200
+        @response.end JSON.stringify
+          status: 200
+          data: null
+          error: null
