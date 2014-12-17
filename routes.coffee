@@ -27,10 +27,11 @@ Router.route "/submit/:_id", ->
 Router.route "/shows/:_id", ->
   id = @params._id
   @layout "PanelLayout"
+  Meteor.subscribe "submissions", id
   @render "ShowDetail",
     data: ->
-    Shows.findOne
-      _id: id
+      Shows.findOne
+        _id: id
   return
 
 Router.route "/shows", ->

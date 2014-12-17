@@ -18,7 +18,15 @@
                 {{> submissionList submissions}}
                 <div class="invoice-footer">
                     <div class="text-center">
-                        <a href="/submit/{{_id}}" class="submitBtn btn btn-primary" disabled={{submissionsClosed}}><i class="fa fa-mail-forward"></i> Submit Replay</a>
+                        {{#if submissionsOpen}}
+                        <button class="toggleSubs btn btn-danger">
+                            <i class="fa fa-folder"></i> Disable Submissions
+                        </button>
+                        {{else}}
+                        <button class="toggleSubs btn btn-success">
+                            <i class="fa fa-folder-open"></i> Enable Submissions
+                        </button>
+                        {{/if}}
                     </div>
                 </div>
             </div>
@@ -27,24 +35,17 @@
         <div class="box">
             <div class="footer-invoice">
                 <div class="row">
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <h4>SUBMISSION REQUIREMENTS</h4>
-                        <hr>
-                        {{#each requirements}}
-                        {{this}}<br>
-                        {{/each}}
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                         <h4>EPISODES</h4>
                         <hr>
                         Submissions rollover to next episode<br>
                         Duplicate match ID submissions not allowed<br>
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                         <h4>CURRENT STATUS</h4>
                         <hr>
                         Submissions Status: <span class={{submissionLabel}}>{{submissionStatus}}</span><br/>
-                        <b>Maximum submission count: {{maxSubmissions}}</b>
+                        Total submission count: <span style="font-weight:bold">{{submissionCount}}</span><br/>
                     </div>
                 </div>
             </div>

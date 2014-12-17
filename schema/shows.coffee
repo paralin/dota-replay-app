@@ -12,15 +12,9 @@ ShowSchema = new SimpleSchema
         type: String
         label: "Description"
         min: 10
-    requirements:
-        type: [String]
-        label: "Requirements for submissions"
     submissionsOpen:
         type: Boolean
-        label: "Are submissions allowed for the current episode?"
-    episode:
-        type: Number
-        label: "The current episode for submissions"
+        label: "Are submissions allowed currently?"
     maxSubmissions:
       type: Number
       label: "Maximum number of allowed open submissions"
