@@ -15,9 +15,6 @@ ShowSchema = new SimpleSchema
     submissionsOpen:
         type: Boolean
         label: "Are submissions allowed currently?"
-    maxSubmissions:
-      type: Number
-      label: "Maximum number of allowed open submissions"
     createdAt:
       type: Date
       autoValue: ->
