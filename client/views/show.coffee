@@ -15,6 +15,9 @@ Template.ShowDetail.events
   "click .toggleFailed": (e)->
     e.preventDefault()
     Session.set "showFailed", !(Session.get "showFailed" || false)
+  "click .submitMatch": (e)->
+    e.preventDefault()
+    Router.go "/submit/#{@_id}"
 
 Template.ShowDetail.helpers
   "submissions": ->
