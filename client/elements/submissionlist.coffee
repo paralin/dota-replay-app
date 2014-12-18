@@ -1,14 +1,38 @@
 Template.submissionList.events
   "click .subDel": ->
     return if @status is 1 or (@status > 2 and @status isnt 5)
-    Submissions.remove {_id: @_id}, (err)->
+    swal
+      title: "Are you sure?"
+      text: "Are you sure you want to delete this submission?"
+      type: "warning"
+      showCancelButton: true
+      confirmButtonColor: "#DD6B55"
+      confirmButtonText: "Yes, delete it!"
+      closeOnConfirm: false
+    , =>
+      Submissions.remove {_id: @_id}, (err)=>
+        if err?
+          swal({type: "error", title: "Can't Delete Submission", text: err.reason})
+        else
+          swal
+            type: "success"
+            title: "Submission Deleted"
+            text: "The submission has been deleted."
+  "click .retryReplay": ->
+    return if @status < 5
+    Meteor.call "retrySubmission", @_id, (err)->
       if err?
-        swal({type: "error", title: "Can't Delete Submission", text: err.reason})
+        swal({type: "error", title: "Can't Retry Submission", text: err.reason})
+  "click .downloadReplay": (e)->
+    e.preventDefault()
+    $(e.currentTarget).attr("disabled", true)
+    Meteor.call "downloadReplay", @_id, (err, res)->
+      $(e.currentTarget).attr("disabled", false)
+      if err?
+        swal({type: "error", title: "Can't Download Replay", text: err.reason})
       else
-        swal
-          type: "success"
-          title: "Submission Deleted"
-          text: "The submission has been deleted."
+        window.open res, "_blank"
+        window.focus()
 Template.submissionList.helpers
   "hasSubmissions": ->
     @? && @.length > 0
@@ -50,3 +74,9 @@ Template.submissionList.helpers
     match.length
   "ready": ->
     @status >= 2 && @status < 5
+  "notready": ->
+    not (@status >= 2 && @status < 5)
+  "failed": ->
+    @status >= 5
+  "notfailed": ->
+    @status < 5

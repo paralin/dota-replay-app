@@ -27,6 +27,15 @@
                             <i class="fa fa-folder-open"></i> Enable Submissions
                         </button>
                         {{/if}}
+                        {{#if showFailed}}
+                        <button class="toggleFailed btn btn-danger">
+                            <i class="fa fa-bullseye"></i> Hide Failed
+                        </button>
+                        {{else}}
+                        <button class="toggleFailed btn btn-success">
+                            <i class="fa fa-bullseye"></i> Show Failed
+                        </button>
+                        {{/if}}
                     </div>
                 </div>
             </div>
