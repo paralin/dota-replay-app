@@ -28,6 +28,9 @@ Router.route('/api/submissions/create', { where: 'server' })
     if !show?
       throwErr @response, 403, "The show #{sub.show} does not exist."
       return
+    if !show.submissionsOpen
+      throwErr @response, 403, "The show \"#{show.name}\" is not open for submissions."
+      return
     Submissions.insert sub, (err)=>
       if err?
         throwErr @response, 403, err.sanitizedError.reason
