@@ -73,7 +73,7 @@ Template.ShowSubmit.rendered = ->
             text: err.message
             type: "error"
         else
-          Router.go "/shows/#{showId}"
+          Router.go "/submissions/#{showId}"
           swal
             title: "Submission Complete"
             text: "Your clip has been submitted. You can monitor its status."
