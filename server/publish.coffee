@@ -8,14 +8,9 @@ Meteor.publish "shows", ->
   Shows.find()
 
 Meteor.publish "submissions", (showid)->
-  return [] if !@userId?
-  user = Meteor.users.findOne {_id: @userId}
-  return [] if !user?
-  show = Shows.find {_id: showid}
-  return [] if !show?
+  return [] if !@userId? || !OrbitPermissions.userCan("view-submissions", "dr", @userId)
   Submissions.find {show: showid}
 
 Meteor.publish "allsubmissions", ->
-  return [] if !@userId?
-  user = Meteor.users.findOne {_id: @userId}
+  return [] if !@userId? || !OrbitPermissions.userCan("view-submissions", "dr", @userId)
   Submissions.find {}
