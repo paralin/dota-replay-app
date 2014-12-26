@@ -63,17 +63,11 @@ Template.submissionList.helpers
     console.log @
     console.log match
     match.length
-  "ready": ->
-    @status >= 2 && @status < 5
-  "notready": ->
-    not (@status >= 2 && @status < 5)
-  "failed": ->
-    @status >= 5
-  "notfailed": ->
-    @status < 5
 Template.submissionRow.rendered = ->
   @$ "select"
-    .select2({width: "resolve"})
+    .select2({
+      width: "resolve",
+    })
     .on "change", (e)->
       id = $(e.currentTarget).find("option[value=\"#{e.val}\"]").attr("id")
       Meteor.call "setShow", id, e.val, (err, res)->
@@ -86,8 +80,8 @@ Template.submissionRow.rendered = ->
 Template.submissionRow.helpers
   "shows": ->
     Shows.find()
-  "isSelected": ->
-    @_id is @show
+  "isSelected": (show)->
+    @_id is show
   "rowClass": ->
     if @status >= 4
       "danger"
@@ -97,3 +91,11 @@ Template.submissionRow.helpers
       "active"
     else if @status == 4
       "warning"
+  "ready": ->
+    @status >= 2 && @status < 5
+  "notready": ->
+    not (@status >= 2 && @status < 5)
+  "failed": ->
+    @status >= 5
+  "notfailed": ->
+    @status < 5

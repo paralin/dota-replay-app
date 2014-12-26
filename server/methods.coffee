@@ -9,9 +9,7 @@ Meteor.methods
     show = Shows.findOne {_id: sub.show}
     if !show?
       throw new Meteor.Error 404, "Can't find that show."
-    user = Meteor.users.findOne {_id: @userId}
-    if !user? # XXX check roles
-      throw new Meteor.Error 403, "Not authorized to download replays for that show."
+    OrbitPermissions.throwIfUserCant "download-replay", "dr", @userId
     if sub.status < 2 || sub.status > 4
       throw new Meteor.Error 403, "That submission replay isn't available (yet?)."
     GetSignedURL sub.matchid+".dem.bz2"

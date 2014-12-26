@@ -7,9 +7,7 @@ Meteor.methods
     show = Shows.findOne {_id: showid}
     if !show?
       throw new Meteor.Error 404, "Can't find that show."
-    user = Meteor.users.findOne {_id: @userId}
-    if !user? # XXX roles
-      throw new Meteor.Error 403, "Not authorized to change show submission status."
+    OrbitPermissions.throwIfUserCant "set-submissions-enabled", "dr", @userId
     Shows.update {_id: showid}, {$set: {submissionsOpen: enable}}
     enable
   "retrySubmission": (id)->
@@ -22,15 +20,14 @@ Meteor.methods
     show = Shows.findOne {_id: sub.show}
     if !show?
       throw new Meteor.Error 404, "Can't find that show."
-    user = Meteor.users.findOne {_id: @userId}
-    if !user? || !hasAnyRole(user, ["admin", "produce"])
-      throw new Meteor.Error 403, "Not authorized to retry failed submissions."
+    OrbitPermissions.throwIfUserCant "retry-submission", "dr", @userId
     if sub.status < 5
       throw new Meteor.Error 403, "That submission hasn't failed (yet)."
     Submissions.update {_id: id}, {$set: {status: 0}}
   "setShow": (id, show)->
     check id, String
     check show, String
+    console.log show
     sub = Submissions.findOne {_id: id}
     if !sub?
       throw new Meteor.Error 404, "Can't find submission."
@@ -39,7 +36,5 @@ Meteor.methods
     show = Shows.findOne {_id: show}
     if !show?
       throw new Meteor.Error 404, "Can't find that show."
-    user = Meteor.users.findOne {_id: @userId}
-    if !user? || !hasAnyRole(user, ["admin", "produce"])
-      throw new Meteor.Error 403, "Not authorized to change show for submissions."
-    Submissions.update {_id: id}, {$set: {show: show}}
+    OrbitPermissions.throwIfUserCant "set-show", "dr", @userId
+    Submissions.update {_id: id}, {$set: {show: show._id}}

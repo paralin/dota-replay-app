@@ -32,7 +32,7 @@
     <td>
         <select style="width: 100%">
             {{#each shows}}
-            <option value="{{_id}}" id="{{../_id}}" selected={{isSelected}}>{{name}}</option>
+            <option value="{{_id}}" id="{{../_id}}" selected="{{isSelected ../show}}">{{name}}</option>
             {{/each}}
         </select>
     </td>
