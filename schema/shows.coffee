@@ -15,15 +15,5 @@ ShowSchema = new SimpleSchema
     submissionsOpen:
         type: Boolean
         label: "Are submissions allowed currently?"
-    createdAt:
-      type: Date
-      autoValue: ->
-        if @isInsert
-          new Date
-        else if @isUpsert
-          $setOnInsert: new Date
-        else
-          @unset()
-        return
 
 Shows.attachSchema ShowSchema

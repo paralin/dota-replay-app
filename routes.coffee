@@ -12,7 +12,7 @@ Router.onBeforeAction ->
 
 Router.route "/", ->
   @layout "PanelLayout"
-  @render "Submissions"
+  @render "Home"
   return
 
 Router.route "/submit/:_id", ->
@@ -24,16 +24,30 @@ Router.route "/submit/:_id", ->
         _id: id
   return
 
-Router.route "/shows/:_id", ->
-  id = @params._id
-  @layout "PanelLayout"
-  Meteor.subscribe "submissions", id
-  @render "ShowDetail",
-    data: ->
-      Shows.findOne
-        _id: id
-  return
+Router.route "/submissions", 
+  subscriptions: ->
+    [Meteor.subscribe("allsubmissions"), Meteor.subscribe("shows")]
+  action: ->
+    @layout "PanelLayout"
+    if @ready()
+      @render "Submissions",
+        data: ->
+          _id: "all"
+          name: "All Submissions"
+    else
+      @render "Loading"
 
-Router.route "/shows", ->
-  @layout "PanelLayout"
-  @render "ShowList"
+Router.route "/submissions/:_id",
+  subscriptions: ->
+    id = @params._id
+    [Meteor.subscribe("submissions", id), Meteor.subscribe("shows")]
+  action: ->
+    id = @params._id
+    @layout "PanelLayout"
+    if @ready()
+      @render "Submissions",
+        data: ->
+          Shows.findOne
+            _id: id
+    else
+      @render "Loading"

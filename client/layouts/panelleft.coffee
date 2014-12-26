@@ -2,19 +2,15 @@ Template.PanelLeftSidebar.helpers
   "shows": ->
     Shows.find()
   "isActiveShowDetail": ->
-    if Router.current().url is "/shows/"+@_id
+    if Router.current().url is "/submissions/"+@_id
       "active"
     else
       ""
   "isActiveShowList": ->
-    if Router.current().url is "/shows"
+    if Router.current().url is "/submissions"
       "active"
     else
       ""
-  "isActiveShowSubmit": ->
-    if Router.current().url is "/submit/"+@_id
-      "active"
-    else
-      ""
-  "hasShows": ->
-    Shows.find().count() > 0
+  "canViewSubmissions": ->
+    user = Meteor.user()
+    Shows.find().count() > 0 # XXX check role

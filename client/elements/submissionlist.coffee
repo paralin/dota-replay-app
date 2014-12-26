@@ -40,15 +40,6 @@ Template.submissionList.helpers
     @.length
   "acceptedCount": ->
     0
-  "rowClass": ->
-    if @status >= 4
-      "danger"
-    else if @status == 1
-      "info"
-    else if @status == 2
-      "active"
-    else if @status == 4
-      "warning"
   "iconClass": ->
     if @status is 0
       "fa fa-circle-o-notch fa-spin"
@@ -80,3 +71,29 @@ Template.submissionList.helpers
     @status >= 5
   "notfailed": ->
     @status < 5
+Template.submissionRow.rendered = ->
+  @$ "select"
+    .select2({width: "resolve"})
+    .on "change", (e)->
+      id = $(e.currentTarget).find("option[value=\"#{e.val}\"]").attr("id")
+      Meteor.call "setShow", id, e.val, (err, res)->
+        if err?
+          swal
+            title: "Issue Changing Show"
+            text: err.reason
+            type: "error"
+
+Template.submissionRow.helpers
+  "shows": ->
+    Shows.find()
+  "isSelected": ->
+    @_id is @show
+  "rowClass": ->
+    if @status >= 4
+      "danger"
+    else if @status == 1
+      "info"
+    else if @status == 2
+      "active"
+    else if @status == 4
+      "warning"

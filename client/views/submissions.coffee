@@ -1,4 +1,4 @@
-Template.ShowDetail.events
+Template.Submissions.events
   "click .toggleSubs": (e)->
     e.preventDefault()
     Meteor.call "setSubmissionsEnabled", @_id, !@submissionsOpen, (err, res)->
@@ -19,13 +19,19 @@ Template.ShowDetail.events
     e.preventDefault()
     Router.go "/submit/#{@_id}"
 
-Template.ShowDetail.helpers
+Template.Submissions.helpers
+  "isFull": ->
+    @_id is "all"
   "submissions": ->
     failed = Session.get "showFailed"
     if failed
-      return Submissions.find({show: @_id}).fetch()
+      filter = {show: @_id}
+      delete filter["show"] if @_id is "all"
+      return Submissions.find(filter).fetch()
     else
-      return Submissions.find({show: @_id, status: {$lt: 5}}).fetch()
+      filter = {show: @_id, status: {$lt: 5}}
+      delete filter["show"] if @_id is "all"
+      return Submissions.find(filter).fetch()
   "stringify": (obj)->
     JSON.stringify obj
   "submissionStatus": ->

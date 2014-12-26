@@ -1,13 +1,7 @@
 Submissions.allow
   remove: (uid, doc)->
+    return false if !uid? #XXX is admin
     sub = doc
-    return false if !uid?
-    show = Shows.findOne {_id: sub.show}
-    if !show?
-      return false
-    user = Meteor.users.findOne {_id: uid}
-    if !user? or !user.reviewShows? or !_.contains(user.reviewShows, show._id)
-      return false
     stat = sub.status
     if stat is 1 or (stat > 2 and stat isnt 5)
       return false
@@ -15,13 +9,10 @@ Submissions.allow
   insert: (uid, doc)->
     sub = doc
     return false if !uid?
+    user = Meteor.users.findOne {_id: uid}
+    return false # XXX permission create submission
     show = Shows.findOne {_id: sub.show}
     if !show?
       return false
-    user = Meteor.users.findOne {_id: uid}
-    if !user? or !user.reviewShows? or !_.contains(user.reviewShows, show._id)
-      return false
-    stat = sub.status
-    if stat is 1 or (stat > 2 and stat isnt 5)
-      return false
+    sub.uid = uid
     true

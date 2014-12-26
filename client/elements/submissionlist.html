@@ -8,48 +8,46 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th style="width: 300px">Title</th>
-                        <th class="hidden-phone">Description</th>
+                        <th style="width: 200px">Show</th>
                         <th class="" style="width: 200px">Match ID</th>
-                        <th>Status</th>
-                        <th style="max-width:150px; text-align:right">Review</th>
+                        <th>Title</th>
+                        <th class="hidden-phone">Description</th>
+                        <th style="max-width:300px">Status</th>
                         <th style="max-width: 400px;text-align:right">Modify</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each this}}
-                    <tr class={{rowClass}}>
-                        <td>{{name}}</td>
-                        <td class="hidden-phone">{{description}}</td>
-                        <td class="">{{matchid}}</td>
-                        <td style="width: 200px">
-                            <i class={{iconClass}}></i>
-                            {{replayStatus status}}
-                        </td>
-                        <td>
-                            <button style="margin-left:5px" class="rejectSub btn btn-xs btn-danger pull-right" disabled={{notready}}><i class="fa fa-thumbs-o-down"></i></button>
-                            <button style="margin-left:5px" class="acceptSub btn btn-xs btn-success pull-right" disabled={{notready}}><i class="fa fa-thumbs-o-up"></i></button>
-                        </td>
-                        <td>
-                            <button style="margin-left:5px" class="subDel btn btn-xs btn-danger pull-right" disabled={{cannotDelete}}><i class="fa fa-trash-o"></i></button>
-                            <button style="margin-left: 5px" class="playReplay btn btn-xs btn-success pull-right" disabled=true><i class="fa fa-play"></i></button>
-                            <button style="margin-left:5px" class="downloadReplay btn btn-xs btn-success pull-right" disabled={{notready}}><i class="fa fa-cloud-download"></i></button>
-                            <button style="margin-left:5px" class="retryReplay btn btn-xs btn-success pull-right" disabled={{notfailed}}><i class="fa fa-refresh"></i></button>
-                        </td>
-                    </tr>
+                    {{>submissionRow}}
                     {{/each}}
                 </tbody>
             </table>
         </div>
-        <div class="col-md-5 col-lg-5 col-sm-6 col-xs-6 pull-right">
-            <ul>
-                <li>Unreviewed Submissions: {{submissionCountR}}</li>
-            </ul>
-            <ul>
-                <li>Pending Submissions: {{submissionCountP}}</li>
-            </ul>
-        </div>
         {{/unless}}
     </div>
 </div>
+</template>
+<template name="submissionRow">
+<tr class={{rowClass}}>
+    <td>
+        <select style="width: 100%">
+            {{#each shows}}
+            <option value="{{_id}}" id="{{../_id}}" selected={{isSelected}}>{{name}}</option>
+            {{/each}}
+        </select>
+    </td>
+    <td class="">{{matchid}}</td>
+    <td>{{name}}</td>
+    <td class="hidden-phone">{{description}}</td>
+    <td style="width: 200px">
+        <i class={{iconClass}}></i>
+        {{replayStatus status}}
+    </td>
+    <td>
+        <button class="subDel btn btn-xs btn-danger pull-right" disabled={{cannotDelete}}><i class="fa fa-trash-o"></i></button>
+        <button class="playReplay btn btn-xs btn-success pull-right" disabled=true><i class="fa fa-play"></i></button>
+        <button class="downloadReplay btn btn-xs btn-success pull-right" disabled={{notready}}><i class="fa fa-cloud-download"></i></button>
+        <button class="retryReplay btn btn-xs btn-success pull-right" disabled={{notfailed}}><i class="fa fa-refresh"></i></button>
+    </td>
+</tr>
 </template>
