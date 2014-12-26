@@ -12,5 +12,4 @@ Template.PanelLeftSidebar.helpers
     else
       ""
   "canViewSubmissions": ->
-    user = Meteor.user()
-    Shows.find().count() > 0 # XXX check role
+    Shows.find().count() > 0 && OrbitPermissions.userCan "view-submissions", "dr"
