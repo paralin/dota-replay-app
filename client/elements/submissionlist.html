@@ -1,53 +1,43 @@
 <template name="submissionList">
-<div class="invoice-body">
-    <div class="row">
-        {{#unless hasSubmissions}}
-        <h3 class="col-md-4" style="margin-bottom:50px;margin-left: auto;margin-right:auto">There are no submissions to display.</h3>
-        {{else}}
-        <div class="col-md-12" id="unseen">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th style="width: 200px">Show</th>
-                        <th class="" style="width: 200px">Match ID</th>
-                        <th>Title</th>
-                        <th class="hidden-phone">Description</th>
-                        <th style="max-width:300px">Status</th>
-                        <th style="max-width: 400px;text-align:right">Modify</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each this}}
-                    {{>submissionRow}}
-                    {{/each}}
-                </tbody>
-            </table>
-        </div>
-        {{/unless}}
-    </div>
-</div>
+    <table class="table table-inbox table-hover">
+        <thead>
+            <tr>
+                <th style="width: 200px">Show</th>
+                <th class="" style="width: 200px">Match ID</th>
+                <th>Title</th>
+                <th class="hidden-phone">Description</th>
+                <th style="max-width:300px">Status</th>
+                <th style="width: 300px;text-align:right">Modify</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each this}}
+            {{>submissionRow}}
+            {{/each}}
+        </tbody>
+    </table>
 </template>
 <template name="submissionRow">
-<tr class={{rowClass}}>
-    <td>
+<tr class="{{rowClass}}"><!--class="unread">-->
+    <td class="view-message">
         <select style="width: 100%">
             {{#each shows}}
             <option value="{{_id}}" id="{{../_id}}" selected="{{isSelected ../show}}">{{name}}</option>
             {{/each}}
         </select>
     </td>
-    <td class="">{{matchid}}</td>
-    <td>{{name}}</td>
-    <td class="hidden-phone">{{description}}</td>
+    <td class="view-message">{{matchid}}</td>
+    <td class="view-message dont-show">{{name}}</td>
+    <td class="view-message">{{description}}</td>
     <td style="width: 200px">
         <i class={{iconClass}}></i>
         {{replayStatus status}}
     </td>
-    <td>
-        <button class="subDel btn btn-xs btn-danger pull-right" disabled={{cannotDelete}}><i class="fa fa-trash-o"></i></button>
-        <button class="playReplay btn btn-xs btn-success pull-right" disabled=true><i class="fa fa-play"></i></button>
-        <button class="downloadReplay btn btn-xs btn-success pull-right" disabled={{notready}}><i class="fa fa-cloud-download"></i></button>
-        <button class="retryReplay btn btn-xs btn-success pull-right" disabled={{notfailed}}><i class="fa fa-refresh"></i></button>
+    <td class="view-message text-right">
+        <button class="subDel btn btn-s btn-danger pull-right" disabled={{cannotDelete}}><i class="fa fa-trash-o"></i></button>
+        <button class="playReplay btn btn-s btn-success pull-right" disabled=true><i class="fa fa-play"></i></button>
+        <button class="downloadReplay btn btn-s btn-success pull-right" disabled={{notready}}><i class="fa fa-cloud-download"></i></button>
+        <button class="retryReplay btn btn-s btn-success pull-right" disabled={{notfailed}}><i class="fa fa-refresh"></i></button>
     </td>
 </tr>
 </template>

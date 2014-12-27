@@ -20,6 +20,11 @@ Router.route "/review/", ->
   @render "Review"
   return
 
+Router.route "/manage/", ->
+  @layout "PanelLayout"
+  @render "Manage"
+  return
+
 Router.route "/submit/:_id", ->
   id = @params._id
   @layout "PanelLayout"
@@ -38,7 +43,7 @@ Router.route "/submissions",
       @render "Submissions",
         data: ->
           _id: "all"
-          name: "All Submissions"
+          name: "All"
     else
       @render "Loading"
 

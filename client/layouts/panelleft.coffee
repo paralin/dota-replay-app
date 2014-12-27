@@ -15,3 +15,5 @@ Template.PanelLeftSidebar.helpers
     Shows.find().count() > 0 && OrbitPermissions.userCan "view-submissions", "dr"
   "canReview": ->
     Shows.find().count() > 0 && OrbitPermissions.userCan "review-submissions", "dr"
+  "canManage": ->
+    OrbitPermissions.userCan "delegate-and-revoke", "permissions"

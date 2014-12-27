@@ -1,7 +1,6 @@
 Template.Submissions.events
-  "click .toggleSubs": (e)->
-    e.preventDefault()
-    Meteor.call "setSubmissionsEnabled", @_id, !@submissionsOpen, (err, res)->
+  "change #enableSubmissions": (e)->
+    Meteor.call "setSubmissionsEnabled", @_id, e.target.checked, (err, res)->
       if err?
        swal
          type: "error"
@@ -12,9 +11,8 @@ Template.Submissions.events
          type: "success"
          text: "Successfully #{if res then "enabled" else "disabled"} submissions for this show."
          title: "Toggled Submissions"
-  "click .toggleFailed": (e)->
-    e.preventDefault()
-    Session.set "showFailed", !(Session.get "showFailed" || false)
+  "change #showFailed": (e)->
+    Session.set "showFailed", e.target.checked
   "click .submitMatch": (e)->
     e.preventDefault()
     Router.go "/submit/#{@_id}"
