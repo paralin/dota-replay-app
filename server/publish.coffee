@@ -14,3 +14,11 @@ Meteor.publish "submissions", (showid)->
 Meteor.publish "allsubmissions", ->
   return [] if !@userId? || !OrbitPermissions.userCan("view-submissions", "dr", @userId)
   Submissions.find {}
+
+Meteor.publish "admin", ->
+  return [] if !@userId? || !OrbitPermissions.userCan("delegate-and-revoke", "permissions", @userId)
+  Meteor.users.find {},
+    fields:
+      profile: 1
+      orbit_roles: 1
+      services: 1

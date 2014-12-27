@@ -20,10 +20,12 @@ Router.route "/review/", ->
   @render "Review"
   return
 
-Router.route "/manage/", ->
-  @layout "PanelLayout"
-  @render "Manage"
-  return
+Router.route "/manage/",
+  action: ->
+    @layout "PanelLayout"
+    @render "Manage",
+      data: ->
+        Meteor.users.find {}
 
 Router.route "/submit/:_id", ->
   id = @params._id
