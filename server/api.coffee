@@ -12,6 +12,18 @@ verifyToken = (request)->
 submission = ["name", "description", "matchid", "show", "uid"]
 submissiont = [typeof(""), typeof(""), typeof(0), typeof(""), typeof("")]
 
+Router.route('/api/shows/:id', { where: 'server' })
+  .get ->
+    id = @params.id
+    show = Shows.findOne {_id: id}
+    if !show?
+      throwErr @response, 404, "The show #{show} does not exist."
+      return
+    @response.writeHead 200
+    @response.end JSON.stringify
+      status: 200
+      data: show
+      error: null
 Router.route('/api/submissions/create', { where: 'server' })
   .post ->
     return unless verifyToken @request
