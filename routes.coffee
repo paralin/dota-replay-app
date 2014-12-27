@@ -15,6 +15,11 @@ Router.route "/", ->
   @render "Home"
   return
 
+Router.route "/review/", ->
+  @layout "PanelLayout"
+  @render "Review"
+  return
+
 Router.route "/submit/:_id", ->
   id = @params._id
   @layout "PanelLayout"

@@ -13,3 +13,5 @@ Template.PanelLeftSidebar.helpers
       ""
   "canViewSubmissions": ->
     Shows.find().count() > 0 && OrbitPermissions.userCan "view-submissions", "dr"
+  "canReview": ->
+    Shows.find().count() > 0 && OrbitPermissions.userCan "review-submissions", "dr"
