@@ -17,13 +17,14 @@ Router.route('/api/shows/:id', { where: 'server' })
     id = @params.id
     show = Shows.findOne {_id: id}
     if !show?
-      throwErr @response, 404, "The show #{show} does not exist."
+      throwErr @response, 404, "The show \"#{id}\" does not exist."
       return
     @response.writeHead 200
     @response.end JSON.stringify
       status: 200
       data: show
       error: null
+
 Router.route('/api/submissions/create', { where: 'server' })
   .post ->
     return unless verifyToken @request
