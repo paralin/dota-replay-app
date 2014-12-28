@@ -34,6 +34,16 @@ Template.ShowSubmit.rendered = ->
             regexp:
               message: "Alphanumeric characters only please."
               regexp: "^[a-zA-Z0-9_ ]*$"
+        hero_to_watch:
+          message: "This field is not valid."
+          validators:
+            stringLength:
+              message: "Hero to watch must be between 0 and 20 characters."
+              max: 20
+              min: 0
+            regexp:
+              message: "Alphanumeric characters only please."
+              regexp: "^[a-zA-Z ]*$"
         matchid:
           message: "This field is not valid."
           validators:

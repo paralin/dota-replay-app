@@ -61,7 +61,7 @@ SubmissionSchema = new SimpleSchema
                 return
     hero_to_watch:
       type: String
-    country:
-      type: String
+      min: 0
+      max: 20
 
 Submissions.attachSchema SubmissionSchema

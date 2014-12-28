@@ -9,8 +9,14 @@ verifyToken = (request)->
   #todo: Actually verify
   true
 
-submission = ["name", "description", "matchid", "show", "uid", "matchtime", "hero_to_watch", "country"]
-submissiont = [typeof(""), typeof(""), typeof(0), typeof(""), typeof(""), typeof(3), typeof(""), typeof("")]
+submission =
+  name: ""
+  description: ""
+  matchid: 0
+  show: ""
+  uid: ""
+  matchtime: 0
+  hero_to_watch: ""
 
 Router.route('/api/shows/:id', { where: 'server' })
   .get ->
@@ -29,11 +35,11 @@ Router.route('/api/submissions/create', { where: 'server' })
   .post ->
     return unless verifyToken @request
     sub = _.pick @request.body, submission
-    for k in submission
+    for k, v of submission
       if !sub[k]?
         throwErr @response, 403, "You are missing #{k} on your submission."
         return
-      typ = submissiont[submission.indexOf(k)]
+      typ = typeof v
       if typeof(sub[k]) isnt typ
         throwErr @response, 403, "The submission property #{k} should be a #{typ}."
         return
