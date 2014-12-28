@@ -34,7 +34,7 @@ Router.route('/api/shows/:id', { where: 'server' })
 Router.route('/api/submissions/create', { where: 'server' })
   .post ->
     return unless verifyToken @request
-    sub = _.pick @request.body, submission
+    sub = _.pick @request.body, _.keys submission
     for k, v of submission
       if !sub[k]?
         throwErr @response, 403, "You are missing #{k} on your submission."
