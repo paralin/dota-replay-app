@@ -9,8 +9,8 @@ verifyToken = (request)->
   #todo: Actually verify
   true
 
-submission = ["name", "description", "matchid", "show", "uid"]
-submissiont = [typeof(""), typeof(""), typeof(0), typeof(""), typeof("")]
+submission = ["name", "description", "matchid", "show", "uid", "matchtime", "hero_to_watch", "country"]
+submissiont = [typeof(""), typeof(""), typeof(0), typeof(""), typeof(""), typeof(3), typeof(""), typeof("")]
 
 Router.route('/api/shows/:id', { where: 'server' })
   .get ->

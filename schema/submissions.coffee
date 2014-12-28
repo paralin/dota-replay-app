@@ -18,6 +18,11 @@ SubmissionSchema = new SimpleSchema
         max: 9999999999
         denyUpdate: true
         unique: true
+    matchtime:
+        type: Number
+        label: "Time of the event"
+        min: 0
+        max: 100000
     show:
         type: String
         label: "Show ID"
@@ -54,4 +59,9 @@ SubmissionSchema = new SimpleSchema
             else
                 @unset()
                 return
+    hero_to_watch:
+      type: String
+    country:
+      type: String
+
 Submissions.attachSchema SubmissionSchema
