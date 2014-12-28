@@ -70,6 +70,7 @@ Template.ShowSubmit.rendered = ->
         show: showId
         episode: 1
         uid: Meteor.userId()
+        matchtime: 0
 
       dataa = $form.serializeArray()
       for da in dataa
