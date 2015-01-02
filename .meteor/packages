@@ -24,3 +24,4 @@ npm-container
 natestrauser:connection-banner
 orbit:permissions
 percolate:synced-cron
+momentjs:moment

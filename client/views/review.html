@@ -1,28 +1,75 @@
 <template name="Review">
-<div class="row invoice">
-  {{#each submissions}}
-  <div class="col-md-12">
-    <div class="panel panel-danger panel-drop">
-      <div class="panel-heading">
-        <h3 class="panel-title">Submission #1</h3>
-      </div>
-      <div class="panel-body">
-      </div>
+<div class="row">
+    {{#each submissions}}
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">expires {{remainingTime}}</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-lg-10">
+                        <h3>Match {{matchid}}</h3>
+                        <form class="form-horizontal submission-form">
+                            <div class="form-group">
+                                <label class="col-lg-1 col-sm-2 control-label">Title</label>
+                                <div class="col-lg-11">
+                                    <p class="form-control-static">{{name}}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-1 col-sm-2 control-label">Description</label>
+                                <div class="col-lg-11">
+                                    <p class="form-control-static">{{description}}</p>
+                                </div>
+                            </div>
+                            {{#if matchtime}}
+                            <div class="form-group">
+                                <label class="col-lg-1 col-sm-2 control-label">Time to Watch</label>
+                                <div class="col-lg-11">
+                                    <p class="form-control-static">{{matchtime}}</p>
+                                </div>
+                            </div>
+                            {{/if}}
+                            {{#if hero_to_watch}}
+                            <div class="form-group">
+                                <label class="col-lg-1 col-sm-2 control-label">Hero to Watch</label>
+                                <div class="col-lg-11">
+                                    <p class="form-control-static">{{hero_to_watch}}</p>
+                                </div>
+                            </div>
+                            {{/if}}
+                            {{#if show}}
+                            <div class="form-group">
+                                <label class="col-lg-1 col-sm-2 control-label">Show</label>
+                                <div class="col-lg-11">
+                                    <p class="form-control-static">{{thisShow.name}}</p>
+                                </div>
+                            </div>
+                            {{/if}}
+                        </form>
+                    </div>
+                    <div class="col-lg-2" style="text-align:right">
+                        <p><button class="btn btn-success btn-lg reqPlayLink">Play in DOTA2</button></p>
+                        <p><button class="btn btn-success btn-lg reqDown">Download Replay</button></p>
+                        <p><button class="btn btn-success btn-lg reqDown">Play in Client</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  {{/each}}
-  {{#unless maxSubs}}
-  <div class="col-md-6 center-block" style="float:none">
-    <div class="panel panel-danger panel-drop">
-      <div class="panel-heading">
-        <h3 class="panel-title">No Submissions</h3>
-      </div>
-      <div class="panel-body">
-        <p>You don't have any (more) submissions to review.</p>
-        <p><button class="btn btn-success btn-lg reqSub">Request Another Submission</button></p>
-      </div>
+    {{/each}}
+    {{#unless maxSubs}}
+    <div class="col-md-12">
+        <div class="panel panel-danger panel-drop">
+            <div class="panel-heading">
+                <h3 class="panel-title">More Submissions</h3>
+            </div>
+            <div class="panel-body">
+                <p><button class="btn btn-success btn-lg reqSub">Request Another Submission</button></p>
+            </div>
+        </div>
     </div>
-  </div>
-  {{/unless}}
+    {{/unless}}
 </div>
 </template>

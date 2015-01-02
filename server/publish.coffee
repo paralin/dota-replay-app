@@ -22,3 +22,6 @@ Meteor.publish "admin", ->
       profile: 1
       orbit_roles: 1
       services: 1
+Meteor.publish "review", ->
+  return [] if !@userId? || !OrbitPermissions.userCan("review-submissions", "dr", @userId)
+  Submissions.find {reviewed: false, reviewer: @userId}

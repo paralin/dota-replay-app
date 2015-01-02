@@ -15,10 +15,13 @@ Router.route "/", ->
   @render "Home"
   return
 
-Router.route "/review/", ->
-  @layout "PanelLayout"
-  @render "Review"
-  return
+Router.route "/review/",
+  subscriptions: ->
+    [Meteor.subscribe("review")]
+  action: ->
+    @layout "PanelLayout"
+    @render "Review"
+    return
 
 Router.route "/manage/",
   action: ->

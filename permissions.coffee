@@ -37,9 +37,6 @@ Permissions
     en:
       summary: "Review submissions."
       name: "Review Submissions"
-
-# Roles
-Permissions
   .defineRole "producer", [ #All but delete-submission
     "view-shows"
     "view-submissions"
