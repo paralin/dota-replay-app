@@ -6,6 +6,24 @@ SubmissionSchema = new SimpleSchema
         label: "Name of the submission"
         min: 5
         max: 30
+    rating:
+        type: Number
+        label: "Rating, 1-10"
+        min: 1
+        max: 10
+        optional: true
+    reviewer:
+        type: String
+        optional: true
+    reviewerUntil:
+        type: Date
+        optional: true
+    reviewed:
+        type: Boolean
+        optional: false
+        autoValue: ->
+          if @isInsert
+            false
     description:
         type: String
         label: "Description of the submission"

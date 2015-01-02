@@ -23,3 +23,4 @@ meteorhacks:npm
 npm-container
 natestrauser:connection-banner
 orbit:permissions
+percolate:synced-cron
