@@ -40,21 +40,6 @@ Template.submissionList.helpers
     @.length
   "acceptedCount": ->
     0
-  "iconClass": ->
-    if @status is 0
-      "fa fa-circle-o-notch fa-spin"
-    else if @status is 1
-      "fa fa-download"
-    else if @status is 2
-      "fa fa-send"
-    else if @status is 3
-      "fa fa-check"
-    else if @status is 4
-      "fa fa-trash"
-    else
-      "fa fa-exclamation-triangle"
-  "cannotDelete": ->
-    @status is 1 or (@status > 2 and @status isnt 5)
   "submissionCountR": ->
     (_.where @, {status: 2}).length
   "submissionCountP": ->
@@ -83,14 +68,16 @@ Template.submissionRow.helpers
   "isSelected": (show)->
     @_id is show
   "rowClass": ->
-    if @status >= 4
+    if @status > 4
       "danger"
     else if @status == 1
       "info"
     else if @status == 2
       "active"
-    else if @status == 4
+    else if @status == 3
       "warning"
+    else if @status == 4
+      "success"
   "ready": ->
     @status >= 2 && @status < 5
   "notready": ->
@@ -99,3 +86,18 @@ Template.submissionRow.helpers
     @status >= 5
   "notfailed": ->
     @status < 5
+  "iconClass": ->
+    if @status is 0
+      "fa fa-circle-o-notch fa-spin"
+    else if @status is 1
+      "fa fa-download"
+    else if @status is 2
+      "fa fa-send"
+    else if @status is 3
+      "fa fa-eye"
+    else if @status is 4
+      "fa fa-check"
+    else
+      "fa fa-exclamation-triangle"
+  "cannotDelete": ->
+    @status is 1 or (@status > 2 and @status isnt 5)
