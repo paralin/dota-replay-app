@@ -8,7 +8,7 @@ SyncedCron.add
   schedule: (parser) ->
     parser.text "every 10 seconds"
   job: ->
-    Submissions.update {reviewed: false, reviewer: {$exists: true}, reviewerUntil: {$lte: new Date()}}, {$unset: {reviewer: "", reviewerUntil: ""}, $set: {reviewed: false}}
+    Submissions.update {reviewed: false, reviewer: {$exists: true}, reviewerUntil: {$lte: new Date()}}, {$unset: {reviewer: "", reviewerUntil: ""}, $set: {reviewed: false, status: 2}}
 
 Meteor.startup ->
   SyncedCron.start()
