@@ -24,6 +24,11 @@ SubmissionSchema = new SimpleSchema
         autoValue: ->
           if @isInsert
             false
+    reviewerDescription:
+        type: String
+        optional: true
+        min: 0
+        max: 500
     description:
         type: String
         label: "Description of the submission"
@@ -49,8 +54,7 @@ SubmissionSchema = new SimpleSchema
     # 0: Submitted to replay server
     # 1: Being fetched by replay server
     # 2: Replay fetched, awaiting moderation
-    # 3: Replay declined
-    # 4: Replay accepted
+    # 3: Replay reviewed
     # 5: Replay invalid
     # 6: Match ID already used
     status:

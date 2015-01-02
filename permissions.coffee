@@ -50,4 +50,5 @@ Permissions
   .defineRole "review", [
     "review-submissions"
     "view-shows"
+    "download-replay"
   ]

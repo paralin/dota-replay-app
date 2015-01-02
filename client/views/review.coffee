@@ -17,10 +17,18 @@ Template.Review.events
           text: err.reason
           type: "error"
   "click .reqDown": (e)->
-    e.preventDefault()
-    Meteor.call "downloadReplay", @_id, (err, res)->
-      if err?
-        swal({type: "error", title: "Can't Download Replay", text: err.reason})
-      else
-        window.open res, "_blank"
-        window.focus()
+     e.preventDefault()
+     Meteor.call "downloadReplay", @_id, (err, res)->
+       if err?
+         swal({type: "error", title: "Can't Download Replay", text: err.reason})
+       else
+         window.open res, "_blank"
+         window.focus()
+  "click .sendRating": (e)->
+     e.preventDefault()
+     id = @_id
+     rating = parseInt $(".ratingIn").val()
+     descrip = $(".reviewDes").val()
+     Meteor.call "reviewSubmission", id, rating, descrip, (err, res)->
+       if err?
+         swal({title: "Can't Submit", text: err.reason, type: "error"})
