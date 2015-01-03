@@ -19,7 +19,7 @@ Template.submissionList.events
             title: "Submission Deleted"
             text: "The submission has been deleted."
   "click .retryReplay": ->
-    return if @status < 5
+    return if @status < 4
     Meteor.call "retrySubmission", @_id, (err)->
       if err?
         swal({type: "error", title: "Can't Retry Submission", text: err.reason})
