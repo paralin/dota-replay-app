@@ -21,9 +21,13 @@ Meteor.methods
     if !show?
       throw new Meteor.Error 404, "Can't find that show."
     OrbitPermissions.throwIfUserCant "retry-submission", "dr", @userId
+    if sub.status is 4
+      Submissions.update {_id: id}, {$set: {status: 2, reviewed: false}, $unset: {reviewer: "", reviewerDescription}}
+      return
     if sub.status < 5
       throw new Meteor.Error 403, "That submission hasn't failed (yet)."
     Submissions.update {_id: id}, {$set: {status: 0}}
+    return
   "setShow": (id, show)->
     check id, String
     check show, String
