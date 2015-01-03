@@ -8,6 +8,8 @@ Template.Review.helpers
     moment(@reviewerUntil).fromNow()
   "thisShow": ->
     Shows.findOne _id: @show
+  "dotaurl": ->
+    "dota2://matchid=#{@matchid}"+(if @matchtime? && @matchtime != 0 then "&matchtime="+@matchtime else "")
 Template.Review.events
   "click .reqSub": ->
     Meteor.call "requestSubmission", (err, res)->
@@ -32,7 +34,3 @@ Template.Review.events
      Meteor.call "reviewSubmission", id, rating, descrip, (err, res)->
        if err?
          swal({title: "Can't Submit", text: err.reason, type: "error"})
-  "click .reqPlayLink": (e)->
-     e.preventDefault()
-     window.open "dota2://matchid=#{@matchid}"+(if @matchtime? && @matchtime != 0 then "&matchtime="+@matchtime else ""), "_blank"
-     window.focus()
