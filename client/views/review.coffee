@@ -32,3 +32,7 @@ Template.Review.events
      Meteor.call "reviewSubmission", id, rating, descrip, (err, res)->
        if err?
          swal({title: "Can't Submit", text: err.reason, type: "error"})
+  "click .reqPlayLink": (e)->
+     e.preventDefault()
+     window.open "dota2://matchid=#{@matchid}"+(if @matchtime? && @matchtime != 0 then "&matchtime="+@matchtime else ""), "_blank"
+     window.focus()
