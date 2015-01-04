@@ -27,7 +27,7 @@ Meteor.methods
     for su in tsub.fetch()
       ids.push su._id
     till = new Date(new Date().getTime()+Config.timeToReview*60000)
-    Submissions.update {_id: {$in: ids}}, {$set: {reviewer: @userId, reviewed: false, reviewerUntil: till, status: 3}}
+    Submissions.update {_id: {$in: ids}}, {$set: {reviewer: @userId, reviewed: false, reviewerUntil: till, status: 3}}, {multi: true}
   "reviewSubmission": (id, rating, descrip)->
     check id, String
     check rating, Number
