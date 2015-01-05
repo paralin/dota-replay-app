@@ -87,7 +87,7 @@ Template.submissionRow.helpers
   "notfailed": ->
     @status < 5
   "notcanretry": ->
-    not (@status is 4 or status >= 5)
+    @status < 4
   "iconClass": ->
     if @status is 0
       "fa fa-circle-o-notch fa-spin"
