@@ -56,12 +56,17 @@
                             <div class="form-group" style="margin-top:10px;margin-bottom:10px">
                                 <label class="col-lg-2 col-sm-2 col-md-3 control-label">Rating</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
-                                    <select class="form-control m-bot15 ratingIn">
-                                        <option value="1">1 - Can't View</option>
-                                        <option value="2">2 - Very Bad</option>
-                                        <option value="3">3 - Average</option>
-                                        <option value="4">4 - Pretty Good</option>
-                                        <option value="5">5 - Amazing</option>
+                                    <select class="form-control m-bot15 ratingIn ddred" onchange="var p=this.className.split(' ');this.className=p.splice(0,p.length-1).join(' ')+' '+this.options[this.selectedIndex].className">
+                                        <option value="1" class="ddred">1 - Can't View</option>
+                                        <option value="2" class="ddred">2 - Horrible</option>
+                                        <option value="3" class="ddred">3 - Bad</option>
+                                        <option value="4" class="ddred">4 - Not Worthy</option>
+                                        <option value="5" class="ddyellow">5 - Average</option>
+                                        <option value="6" class="ddyellow">6 - Average</option>
+                                        <option value="7" class="ddyellow">7 - Pretty Good</option>
+                                        <option value="8" class="ddgreen">8 - Amazing</option>
+                                        <option value="9" class="ddgreen">9 - Unbelieveable</option>
+                                        <option value="10" class="ddblue">10 - Own Video</option>
                                     </select>
                                 </div>
                             </div>

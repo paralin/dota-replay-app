@@ -8,7 +8,7 @@ SyncedCron.add
   schedule: (parser) ->
     parser.text "every 10 seconds"
   job: ->
-    Submissions.update {status: 3, reviewed: false, reviewer: {$exists: true}, reviewerUntil: {$lte: new Date()}}, {$unset: {reviewer: "", reviewerUntil: ""}, $set: {reviewed: false, status: 2}}
+    Submissions.update {status: 3, reviewed: false, reviewer: {$exists: true}, reviewerUntil: {$lte: new Date()}}, {$unset: {reviewer: "", reviewerUntil: ""}, $set: {reviewed: false, status: 2}}, {multi: true}
 
 checkEdge = ->
   Submissions.update {reviewer: {$exists: false}, status: 3}, {$set: {status: 2}}
