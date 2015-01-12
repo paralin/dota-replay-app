@@ -4,7 +4,7 @@ SubmissionSchema = new SimpleSchema
     name:
         type: String
         label: "Name of the submission"
-        min: 5
+        min: 2 
         max: 30
     rating:
         type: Number
@@ -32,8 +32,8 @@ SubmissionSchema = new SimpleSchema
     description:
         type: String
         label: "Description of the submission"
-        min: 5
-        max: 130
+        min: 0
+        max: 300
     matchid:
         type: Number
         label: "Match ID of the submission"
