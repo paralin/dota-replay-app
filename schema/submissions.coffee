@@ -4,7 +4,7 @@ SubmissionSchema = new SimpleSchema
     name:
         type: String
         label: "Name of the submission"
-        min: 2 
+        min: 0
         max: 30
     rating:
         type: Number
