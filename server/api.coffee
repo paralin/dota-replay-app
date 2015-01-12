@@ -15,6 +15,7 @@ submission =
   matchid: 0
   show: ""
   uid: ""
+  uname: ""
   matchtime: 0
   hero_to_watch: ""
 
