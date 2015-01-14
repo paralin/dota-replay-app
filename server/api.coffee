@@ -10,7 +10,6 @@ verifyToken = (request)->
   true
 
 submission =
-  name: ""
   description: ""
   matchid: 0
   show: ""

@@ -1,11 +1,6 @@
 @Submissions = new Mongo.Collection "submissions"
 
 SubmissionSchema = new SimpleSchema
-    name:
-        type: String
-        label: "Name of the submission"
-        min: 0
-        max: 30
     rating:
         type: Number
         label: "Rating, 1-10"

@@ -10,18 +10,6 @@ Template.ShowSubmit.rendered = ->
         invalid: "fa fa-ban"
         validating: "fa fa-refresh fa-spin"
       fields:
-        name:
-          message: "This clip name is not valid."
-          validators:
-            notEmpty:
-              message: "Name is mandatory."
-            stringLength:
-              message: "Name must be between 5 and 30 characters."
-              max: 30
-              min: 5
-            regexp:
-              message: "Alphanumeric characters only please."
-              regexp: "^[a-zA-Z0-9_ ]*$"
         description:
           message: "This field is not valid."
           validators:
@@ -70,6 +58,7 @@ Template.ShowSubmit.rendered = ->
         show: showId
         episode: 1
         uid: Meteor.userId()
+        uname: Meteor.user().profile.name
         matchtime: 0
 
       dataa = $form.serializeArray()
