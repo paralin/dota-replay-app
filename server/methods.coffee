@@ -20,7 +20,7 @@ Meteor.methods
     esub = Submissions.find {reviewed: false, reviewer: @userId}
     if esub.count() >= Config.maxConcurrentReview
       throw new Meteor.Error "max", "You already have #{Config.maxConcurrentReview} submissions to review."
-    tsub = Submissions.find {reviewed: false, reviewer: {$exists: false}, status: 2}, {limit: Config.maxConcurrentReview-esub.count(), fields: {_id: 1}}
+    tsub = Submissions.find {reviewed: false, reviewer: null, status: 2}, {limit: Config.maxConcurrentReview-esub.count(), fields: {_id: 1}}
     if tsub.count() == 0
       throw new Meteor.Error 404, "There are no more available submissions to review."
     ids = []

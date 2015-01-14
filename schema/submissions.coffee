@@ -65,6 +65,7 @@ SubmissionSchema = new SimpleSchema
         label: "The user ID of the submitter"
         index: true
         denyUpdate: true
+        optional: true
     uname:
         type: String
         label: "The profile name of the submitter"

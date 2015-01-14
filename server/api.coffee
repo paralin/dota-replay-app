@@ -1,9 +1,13 @@
 throwErr = (resp, code, descrip)->
+  console.log "=== API ERROR ==="
   resp.writeHead code
-  resp.end JSON.stringify
+  err = JSON.stringify
     error: descrip
     status: code
     data: null
+  console.log err
+  console.log "================="
+  resp.end err
 
 verifyToken = (request)->
   #todo: Actually verify
