@@ -24,6 +24,8 @@ Router.route "/review/",
     return
 
 Router.route "/manage/",
+  subscriptions: ->
+    [Meteor.subscribe("admin")]
   action: ->
     @layout "PanelLayout"
     @render "Manage",
@@ -39,7 +41,7 @@ Router.route "/submit/:_id", ->
         _id: id
   return
 
-Router.route "/submissions", 
+Router.route "/submissions",
   subscriptions: ->
     [Meteor.subscribe("allsubmissions"), Meteor.subscribe("shows")]
   action: ->
