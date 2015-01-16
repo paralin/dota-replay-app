@@ -2,6 +2,7 @@
     <table class="table table-condensed table-hover">
         <thead>
             <tr>
+                <th style="width: 100px">Age</th>
                 <th style="width: 200px">Show</th>
                 <th class="" style="width: 200px">Match ID</th>
                 <th>Submitter</th>
@@ -18,6 +19,9 @@
 </template>
 <template name="submissionRow">
 <tr class="{{rowClass}}"><!--class="unread">-->
+    <td class="view-message">
+      {{timeAgo}}
+    </td>
     <td class="view-message">
         <select style="width: 100%">
             {{#each shows}}

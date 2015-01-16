@@ -63,6 +63,9 @@ Template.submissionRow.rendered = ->
             type: "error"
 
 Template.submissionRow.helpers
+  "timeAgo": ->
+    Session.get "1min"
+    moment(@createdAt).fromNow true
   "shows": ->
     Shows.find()
   "isSelected": (show)->

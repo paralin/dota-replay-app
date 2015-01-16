@@ -22,14 +22,15 @@ Template.Submissions.helpers
     @_id is "all"
   "submissions": ->
     failed = Session.get "showFailed"
+    sort = {sort: {createdAt: -1}}
     if failed
       filter = {show: @_id}
       delete filter["show"] if @_id is "all"
-      return Submissions.find(filter).fetch()
+      return Submissions.find(filter, sort).fetch()
     else
       filter = {show: @_id, status: {$lt: 5}}
       delete filter["show"] if @_id is "all"
-      return Submissions.find(filter).fetch()
+      return Submissions.find(filter, sort).fetch()
   "stringify": (obj)->
     JSON.stringify obj
   "submissionStatus": ->
