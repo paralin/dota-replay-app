@@ -19,9 +19,9 @@ kidovate:bower
 reywood:publish-composite
 mizzao:user-status
 chuangbo:marked
-meteorhacks:npm
 npm-container
 natestrauser:connection-banner
 orbit:permissions
 percolate:synced-cron
 momentjs:moment
+meteorhacks:npm
