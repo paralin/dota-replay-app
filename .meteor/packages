@@ -25,3 +25,4 @@ orbit:permissions
 percolate:synced-cron
 momentjs:moment
 meteorhacks:npm
+meteorhacks:async
