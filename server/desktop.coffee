@@ -74,7 +74,7 @@ class Client
       @sendMsg {m: 0, success: true}
       @sendMsg {m: 4, user: {name: user.profile.name, roles: user.orbit_roles, steam: user.services.steam}}
       allSubs = Submissions.find()
-      @sendMsg {m: 5, submissions: allSubs.count(), yoursubmissions: Submissions.find({reviewer: user._id}).count()}
+      @sendMsg {m: 5, submissions: allSubs.count()}
       if !@setupObserve()
         @sendMsg {m: 1}
     else if @state is 0
