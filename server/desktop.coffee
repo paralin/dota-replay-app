@@ -34,10 +34,12 @@ class Client
     return false if !OrbitPermissions.userCan("review-submissions", "dr", @uid)
     @watchhand = Submissions.find({reviewed: false, reviewer: @uid}).observe
       added: (doc)=>
+        doc.showname = Shows.findOne({_id: doc.show}).name
         @sendMsg
           m: 2
           replay: doc
       changed: (doc)=>
+        doc.showname = Shows.findOne({_id: doc.show}).name
         @sendMsg
           m: 2
           replay: doc
@@ -54,6 +56,10 @@ class Client
     if jmsg.m is 0
       return if !jmsg.token?
       console.log "Checking handshake..."
+      if jmsg.version isnt "0.1"
+        console.log "Client is out of date #{jmsg.version}..."
+        @sendMsg {m: 9999}
+        return
       tokend = null
       try
         tokend = jwt.verify jmsg.token, secret
@@ -80,7 +86,37 @@ class Client
     else if @state is 0
       return
     else
-      #Parse some other message
+      switch jmsg.m
+        when 1
+          sub = Submissions.findOne {_id: jmsg.id, reviewer: @uid}
+          if !sub?
+            return @sendMsg {m: 6, success: false, reason: "Can't find that submission. Try again."}
+          url = GetSignedURL "#{sub.matchid}.dem.bz2"
+          @sendMsg {m: 6, success: true, url: url, matchid: sub.matchid, matchtime: sub.matchtime}
+        when 2
+          unless OrbitPermissions.userCan "review-submissions", "dr", @uid
+            @sendMsg {m: 7, success: false, reason: "You are not allowed to review submissions."}
+            return
+          esub = Submissions.find {reviewed: false, reviewer: @uid}
+          if esub.count() >= Config.maxConcurrentReview
+            @sendMsg {m: 7, success: false, reason: "You already have #{Config.maxConcurrentReview} submissions to review."}
+            return
+          tsub = Submissions.find {reviewed: false, reviewer: null, status: 2}, {limit: Config.maxConcurrentReview-esub.count(), fields: {_id: 1}}
+          if tsub.count() == 0
+            @sendMsg {m: 7, success: false, reason: "There are no more available submissions to review."}
+            return
+          ids = []
+          for su in tsub.fetch()
+            ids.push su._id
+          till = new Date(new Date().getTime()+Config.timeToReview*60000)
+          Submissions.update {_id: {$in: ids}}, {$set: {reviewer: @uid, reviewed: false, reviewerUntil: till, status: 3}}, {multi: true}
+          @sendMsg {m: 7, success: true}
+        when 3
+          unless OrbitPermissions.userCan "review-submissions", "dr", @uid
+            return
+          sub = Submissions.findOne {_id: jmsg.id, reviewer: @uid}
+          return if !sub?
+          Submissions.update {_id: jmsg.id}, {$set: {reviewed: true, rating: parseInt(""+jmsg.rating), reviewerDescription: jmsg.descrip, status: 4}, $unset: {reviewerUntil: ""}}
 
 ws.on 'connection', Meteor.bindEnvironment (ws)->
   clii++

@@ -12,20 +12,20 @@
                         <h3>Match {{matchid}}</h3>
                         <form class="form-horizontal submission-form">
                             <div class="form-group">
-                                <label class="col-lg-2 col-sm-2 col-md-3 control-label">Submitter</label>
+                                <label class="col-lg-2 col-sm-3 col-md-3 control-label">Submitter</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
                                     <p class="form-control-static">{{uname}}</p>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-lg-2 col-sm-2 col-md-3 control-label">Info</label>
+                                <label class="col-lg-2 col-sm-3 col-md-3 control-label">Info</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
                                     <p class="form-control-static">{{description}}</p>
                                 </div>
                             </div>
                             {{#if matchtime}}
                             <div class="form-group">
-                                <label class="col-lg-2 col-sm-2 col-md-3 control-label">Time to Watch</label>
+                                <label class="col-lg-2 col-sm-3 col-md-3 control-label">Time to Watch</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
                                     <p class="form-control-static">{{matchtime}}</p>
                                 </div>
@@ -33,7 +33,7 @@
                             {{/if}}
                             {{#if hero_to_watch}}
                             <div class="form-group">
-                                <label class="col-lg-2 col-sm-2 col-md-3 control-label">Hero to Watch</label>
+                                <label class="col-lg-2 col-sm-3 col-md-3 control-label">Hero to Watch</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
                                     <p class="form-control-static">{{hero_to_watch}}</p>
                                 </div>
@@ -41,20 +41,20 @@
                             {{/if}}
                             {{#if show}}
                             <div class="form-group">
-                                <label class="col-lg-2 col-sm-2 col-md-3 control-label">Show</label>
+                                <label class="col-lg-2 col-sm-3 col-md-3 control-label">Show</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
                                     <p class="form-control-static">{{thisShow.name}}</p>
                                 </div>
                             </div>
                             {{/if}}
                             <div class="form-group" style="margin-top:10px;margin-bottom:10px">
-                                <label class="col-lg-2 col-sm-2 col-md-3 control-label">Description</label>
+                                <label class="col-lg-2 col-sm-3 col-md-3 control-label">Description</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
                                     <textarea class="form-control reviewDes" max=500></textarea>
                                 </div>
                             </div>
                             <div class="form-group" style="margin-top:10px;margin-bottom:10px">
-                                <label class="col-lg-2 col-sm-2 col-md-3 control-label">Rating</label>
+                                <label class="col-lg-2 col-sm-3 col-md-3 control-label">Rating</label>
                                 <div class="col-lg-10 col-sm-9 col-md-9">
                                     <select class="form-control m-bot15 ratingIn ddred" onchange="var p=this.className.split(' ');this.className=p.splice(0,p.length-1).join(' ')+' '+this.options[this.selectedIndex].className">
                                         <option value="1" class="ddred">1 - Can't View</option>
@@ -73,10 +73,9 @@
                         </form>
                         <p><button class="btn btn-lg sendRating">Submit Rating</button></p>
                     </div>
-                    <div class="col-lg-2 col-sm-5 col-md-5" style="text-align:right">
+                    <div class="col-lg-2 col-sm-4 col-md-5" style="text-align:right">
                         <p><a class="btn btn-default btn-lg" href={{dotaurl}}>Play in DOTA2</a></p>
                         <p><button class="btn btn-lg reqDown">Download Replay</button></p>
-                        <p><button class="btn btn-lg reqDown" disabled="">Play w/ Client</button></p>
                     </div>
                 </div>
             </div>
