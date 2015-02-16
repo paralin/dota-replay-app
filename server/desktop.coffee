@@ -56,7 +56,7 @@ class Client
     if jmsg.m is 0
       return if !jmsg.token?
       console.log "Checking handshake..."
-      if jmsg.version isnt "0.2"
+      if jmsg.version isnt "1.0"
         console.log "Client is out of date #{jmsg.version}..."
         @sendMsg {m: 9999}
         return
