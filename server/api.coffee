@@ -64,3 +64,36 @@ Router.route('/api/submissions/create', { where: 'server' })
           status: 200
           data: null
           error: null
+
+roleSet =
+  secret: ""
+  steamid: ""
+  roles: [""]
+
+Router.route('/api/users/roles', { where: 'server' })
+  .post ->
+    req = _.pick @request.body, _.keys roleSet
+    for k, v of roleSet
+      if !req[k]?
+        throwErr @response, 403, "You are missing #{k} on your submission."
+        return
+      typ = typeof v
+      if typeof(req[k]) isnt typ
+        throwErr @response, 403, "The request property #{k} should be a #{typ}."
+        return
+    if req.secret isnt "LOm6HcsSTHZU5g"
+      throwErr @response, 403, "The secret is wrong."
+      return
+    user = Meteor.users.findOne({"services.steam.id": req.steamid})
+    if !user?
+      throwErr @response, 403, "Can't find user with that steam ID."
+      return
+    if OrbitPermissions.isAdmin user._id
+      throwErr @response, 403, "Can't change roles of an admin."
+      return
+    Meteor.users.update {_id: user._id}, {$set: {orbit_roles: req.roles}}
+    @response.writeHead 200
+    @response.end JSON.stringify
+      status: 200
+      data: null
+      error: null
