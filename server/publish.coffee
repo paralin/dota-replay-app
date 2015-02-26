@@ -7,8 +7,10 @@ Meteor.publish null, ->
 Meteor.publish "shows", ->
   Shows.find()
 
-Meteor.publish "submissions", (showid)->
+Meteor.publish "submissions", (showid, skip, count)->
   check showid, String
+  skip = skip || 0
+  count = count || 50
   return [] if !@userId? || !OrbitPermissions.userCan("view-submissions", "dr", @userId)
   Submissions.find {show: showid},
     fields:
@@ -19,8 +21,14 @@ Meteor.publish "submissions", (showid)->
       hero_to_watch: 0
       matchtime: 0
       rating: 0
+    skip: skip
+    limit: count
+    sort:
+      createdAt: -1
 
-Meteor.publish "allsubmissions", ->
+Meteor.publish "allsubmissions", (skip, count)->
+  skip = skip || 0
+  count = count || 50
   return [] if !@userId? || !OrbitPermissions.userCan("view-submissions", "dr", @userId)
   Submissions.find {},
     fields:
@@ -31,6 +39,10 @@ Meteor.publish "allsubmissions", ->
       hero_to_watch: 0
       matchtime: 0
       rating: 0
+    skip: skip
+    limit: count
+    sort:
+      createdAt: -1
 
 Meteor.publish "admin", ->
   return [] if !@userId? || !OrbitPermissions.userCan("delegate-and-revoke", "permissions", @userId)

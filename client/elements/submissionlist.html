@@ -1,45 +1,46 @@
 <template name="submissionList">
-    <table class="table table-condensed table-hover">
-        <thead>
-            <tr>
-                <th style="width: 100px">Age</th>
-                <th style="width: 200px">Show</th>
-                <th class="" style="width: 200px">Match ID</th>
-                <th>Submitter</th>
-                <th style="max-width:300px">Status</th>
-                <th style="width: 150px;text-align:right">Modify</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each this}}
-            {{>submissionRow}}
-            {{/each}}
-        </tbody>
-    </table>
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th style="width: 100px">Age</th>
+      <th style="width: 200px">Show</th>
+      <th class="" style="width: 200px">Match ID</th>
+      <th>Submitter</th>
+      <th style="max-width:300px">Status</th>
+      <th style="width: 150px;text-align:right">Modify</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each this}}
+    {{>submissionRow}}
+    {{/each}}
+  </tbody>
+</table>
+<div class="row-fluid"><div class="span6"><div class="dataTables_info" id="example_info" role="status" aria-live="polite">Showing {{skipStart}} to {{skipEnd}}</div></div><div class="span6"><div class="dataTables_paginate paging_bootstrap pagination" id="example_paginate"><ul><li class="prev disabled"><a href="#">First</a></li><li class="prev disabled"><a href="#">←</a></li><li class="active"><a href="#">1</a></li><li><a href="#">2</a></li><li><a href="#">3</a></li><li><a href="#">4</a></li><li><a href="#">5</a></li><li class="next"><a href="#">→</a></li><li class="next"><a href="#">Last</a></li></ul></div></div></div>
 </template>
 <template name="submissionRow">
 <tr class="{{rowClass}}"><!--class="unread">-->
-    <td class="view-message">
-      {{timeAgo}}
-    </td>
-    <td class="view-message">
-        <select style="width: 100%">
-            {{#each shows}}
-            <option value="{{_id}}" id="{{../_id}}" selected="{{isSelected ../show}}">{{name}}</option>
-            {{/each}}
-        </select>
-    </td>
-    <td class="view-message">{{matchid}}</td>
-    <td class="view-message dont-show">{{uname}}</td>
-    <td style="width: 250px">
-        <i class={{iconClass}}></i>
-        {{replayStatus status}}
-    </td>
-    <td class="view-message text-right">
-        <button class="subDel btn btn-xs btn-danger pull-right" disabled={{cannotDelete}}><i class="fa fa-trash-o"></i></button>
-        <button class="playReplay btn btn-xs btn-xsuccess pull-right" disabled=true><i class="fa fa-play"></i></button>
-        <button class="downloadReplay btn btn-xs btn-xsuccess pull-right" disabled={{notready}}><i class="fa fa-cloud-download"></i></button>
-        <button class="retryReplay btn btn-xs btn-xsuccess pull-right" disabled={{notcanretry}}><i class="fa fa-refresh"></i></button>
-    </td>
+  <td class="view-message">
+    {{timeAgo}}
+  </td>
+  <td class="view-message">
+    <select style="width: 100%">
+      {{#each shows}}
+      <option value="{{_id}}" id="{{../_id}}" selected="{{isSelected ../show}}">{{name}}</option>
+      {{/each}}
+    </select>
+  </td>
+  <td class="view-message">{{matchid}}</td>
+  <td class="view-message dont-show">{{uname}}</td>
+  <td style="width: 250px">
+    <i class={{iconClass}}></i>
+    {{replayStatus status}}
+  </td>
+  <td class="view-message text-right">
+    <button class="subDel btn btn-xs btn-danger pull-right" disabled={{cannotDelete}}><i class="fa fa-trash-o"></i></button>
+    <button class="playReplay btn btn-xs btn-xsuccess pull-right" disabled=true><i class="fa fa-play"></i></button>
+    <button class="downloadReplay btn btn-xs btn-xsuccess pull-right" disabled={{notready}}><i class="fa fa-cloud-download"></i></button>
+    <button class="retryReplay btn btn-xs btn-xsuccess pull-right" disabled={{notcanretry}}><i class="fa fa-refresh"></i></button>
+  </td>
 </tr>
 </template>

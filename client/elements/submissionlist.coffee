@@ -48,6 +48,10 @@ Template.submissionList.helpers
     console.log @
     console.log match
     match.length
+  "skipStart": ->
+    (Session.get "submissionsSkip")+1
+  "skipEnd": ->
+    (Session.get "submissionsSkip")+100
 Template.submissionRow.rendered = ->
   @$ "select"
     .select2({

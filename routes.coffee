@@ -41,10 +41,16 @@ Router.route "/submit/:_id", ->
         _id: id
   return
 
-Router.route "/submissions",
+Router.route "/submissions/:_count?",
   subscriptions: ->
-    [Meteor.subscribe("allsubmissions"), Meteor.subscribe("shows")]
+    [Meteor.subscribe("shows")]
   action: ->
+    count = @params._count || 1
+    count = 1 if count < 1
+    count = count-1
+    console.log count
+    Session.set "submissionsSkip", (count*100)
+    Meteor.subscribe("allsubmissions", Session.get("submissionsSkip"))
     @layout "PanelLayout"
     if @ready()
       @render "Submissions",
@@ -54,11 +60,17 @@ Router.route "/submissions",
     else
       @render "Loading"
 
-Router.route "/submissions/:_id",
+Router.route "/submissions/:_id/:_count?",
   subscriptions: ->
     id = @params._id
-    [Meteor.subscribe("submissions", id), Meteor.subscribe("shows")]
+    [Meteor.subscribe("shows")]
   action: ->
+    count = @params._count || 1
+    count = 1 if count < 1
+    count = count-1
+    console.log count
+    Session.set "submissionsSkip", (count*100)
+    Meteor.subscribe("submissions", id, Session.get("submissionsSkip"))
     id = @params._id
     @layout "PanelLayout"
     if @ready()

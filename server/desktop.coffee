@@ -48,6 +48,12 @@ class Client
           m: 3
           id: doc._id
     return true
+  sendStats: ->
+    allSubs = Submissions.find({}, {fields: {_id: 1}})
+    needReview = Submissions.find({status: 2}, {fields: {_id: 1}})
+    reviewed = Submissions.find({status: 4}, {fields: {_id: 1}})
+    reviewedByYou = Submissions.find({status: 4, reviewer: @uid}, {fields: {_id: 1}})
+    @sendMsg {m: 5, allSubmissions: allSubs.count(), needReview: needReview.count(), reviewed: reviewed.count(), reviewedByYou: reviewedByYou.count()}
   processMessage: (msg)->
     console.log "Received message: "+msg
     jmsg = JSON.parse msg
@@ -56,7 +62,7 @@ class Client
     if jmsg.m is 0
       return if !jmsg.token?
       console.log "Checking handshake..."
-      if jmsg.version isnt "1.1"
+      if jmsg.version isnt "1.2"
         console.log "Client is out of date #{jmsg.version}..."
         @sendMsg {m: 9999}
         return
@@ -79,8 +85,7 @@ class Client
       console.log "Authenticated #{user.profile.name} (#{@uid}) succesfully."
       @sendMsg {m: 0, success: true}
       @sendMsg {m: 4, user: {name: user.profile.name, roles: user.orbit_roles, steam: user.services.steam}}
-      allSubs = Submissions.find()
-      @sendMsg {m: 5, submissions: allSubs.count()}
+      @sendStats()
       if !@setupObserve()
         @sendMsg {m: 1}
     else if @state is 0
@@ -92,7 +97,7 @@ class Client
           if !sub?
             return @sendMsg {m: 6, success: false, reason: "Can't find that submission. Try again."}
           url = GetSignedURL "#{sub.matchid}.dem.bz2"
-          @sendMsg {m: 6, success: true, url: url, matchid: sub.matchid, matchtime: sub.matchtime}
+          @sendMsg {m: 6, success: true, id: jmsg.id, url: url, matchid: sub.matchid, matchtime: sub.matchtime}
         when 2
           unless OrbitPermissions.userCan "review-submissions", "dr", @uid
             @sendMsg {m: 7, success: false, reason: "You are not allowed to review submissions."}
@@ -117,6 +122,7 @@ class Client
           sub = Submissions.findOne {_id: jmsg.id, reviewer: @uid}
           return if !sub?
           Submissions.update {_id: jmsg.id}, {$set: {reviewed: true, rating: parseInt(""+jmsg.rating), reviewerDescription: jmsg.descrip, status: 4}, $unset: {reviewerUntil: ""}}
+          @sendStats()
 
 ws.on 'connection', Meteor.bindEnvironment (ws)->
   clii++
