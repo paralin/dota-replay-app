@@ -5,5 +5,5 @@ ServiceConfiguration.configurations.insert
 @api_secret = process.env.API_SECRET
 
 @Config =
-  maxConcurrentReview: process.env.DR_CONCURRENT_REVIEW || 2
+  maxConcurrentReview: process.env.DR_CONCURRENT_REVIEW || 5
   timeToReview: process.env.DR_REVIEW_TIME_MINS || 30
