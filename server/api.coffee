@@ -97,3 +97,20 @@ Router.route('/api/users/roles', { where: 'server' })
       status: 200
       data: null
       error: null
+
+Router.route('/download_match/:matchid', { where: 'server' })
+  .get ->
+    id = @params.matchid
+    iid = parseInt id
+    if !id? || iid isnt iid
+      return throwErr @response, 403, "Please specify a match id."
+    sub = Submissions.findOne {matchid: iid, status: 4}
+    if !sub?
+      return throwErr @response, 404, "That submission couldn't be found or hasn't been downloaded yet."
+    url = GetSignedURL "#{sub.matchid}.dem.bz2"
+    @response.writeHead 302,
+      "Location": url
+    @response.end JSON.stringify
+      status: 200
+      data: url
+      error: null
