@@ -14,6 +14,9 @@ else
   AWS.config.update config
   s3config = JSON.parse Assets.getText "s3config.json"
 
+s3config.Bucket = process.env.S3_BUCKET || "dotareplay"
+console.log "Using S3 bucket: #{s3config.Bucket}"
+
 s3 = new AWS.S3 {params: s3config}
 
 @GetSignedURL = (key,expires)->
