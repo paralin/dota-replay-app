@@ -4,7 +4,7 @@ SubmissionSchema = new SimpleSchema
     rating:
         type: Number
         label: "Rating, 1-10"
-        min: 1
+        min: 0
         max: 10
         optional: true
     reviewer:
