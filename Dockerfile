@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y curl git build-essential && curl -sL ht
 RUN curl https://install.meteor.com/ | sh
 
 ADD . /build/
-RUN cd /build && git clean -Xfd && rm -rf /build/packages/npm-container/.npm/package && meteor build --directory /bundle/ && \
+RUN cd /build && rm -rf /build/packages/npm-container/.npm/package && meteor build --directory /bundle/ && \
     rm -rf /build && mkdir /app/ && mv /bundle/bundle/* /app/ && rm -rf /bundle/ && \
     cd /app/programs/server/ && npm install
 
