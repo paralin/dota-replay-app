@@ -93,9 +93,13 @@ class Client
     else
       switch jmsg.m
         when 1
-          sub = Submissions.findOne {_id: jmsg.id, reviewer: @uid}
+          sub = {}
+          if !jmsg.matchid
+            sub = Submissions.findOne {_id: jmsg.id, reviewer: @uid}
+          else
+            sub = Submissions.findOne {matchid: parseInt(jmsg.id)}
           if !sub?
-            return @sendMsg {m: 6, success: false, reason: "Can't find that submission. Try again."}
+            return @sendMsg {m: 6, id: jmsg.id, success: false, reason: "Can't find that submission. Try again."}
           url = GetSignedURL "#{sub.matchid}.dem.bz2"
           @sendMsg {m: 6, success: true, id: jmsg.id, url: url, matchid: sub.matchid, matchtime: sub.matchtime}
         when 2
