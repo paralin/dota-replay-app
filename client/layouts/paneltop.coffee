@@ -1,7 +1,18 @@
 Template.PanelTopNav.events
     "click .logoutButton": ->
       Meteor.logout()
-    "click .showTokenButton": ->
+
+Meteor.startup ->
+  Tracker.autorun ->
+    user = Meteor.user()
+    if user?
+      Meteor.call "getDesktopToken", (err, res)->
+        if err?
+          console.log err
+        else
+          console.log "Desktop token: #{res}"
+          Session.set "desktopToken", res
+
 Template.PanelTopNav.rendered = ->
   Meteor.call "getDesktopToken", (err, res)->
     if err?
