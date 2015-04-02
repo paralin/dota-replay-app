@@ -1,9 +1,4 @@
 Template.Manage.events
-  "click .userRow": ->
-    swal
-      title: "Not Implemented"
-      type: "error"
-      text: "Profile pages not implemented yet."
   "click .viewSteam": (e)->
     e.stopImmediatePropagation()
     url = "http://steamcommunity.com/profiles/#{@services.steam.id}"
