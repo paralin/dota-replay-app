@@ -54,4 +54,4 @@ Meteor.methods
     for user in users
       user.reviewCount = Submissions.find({reviewed: true, reviewer: user._id}).count()
       user.canReview = OrbitPermissions.userCan "review-submissions", "dr", user._id
-    _.sortBy(users, "reviewCount")
+    _.sortBy(users, "reviewCount").reverse()
