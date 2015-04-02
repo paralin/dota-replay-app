@@ -53,4 +53,5 @@ Meteor.methods
     users = users.fetch()
     for user in users
       user.reviewCount = Submissions.find({reviewed: true, reviewer: user._id}).count()
-    users
+      user.canReview = OrbitPermissions.userCan "review-submissions", "dr", user._id
+    _.sortBy(users, "reviewCount")
