@@ -44,13 +44,6 @@ Meteor.publish "allsubmissions", (skip, count)->
     sort:
       createdAt: -1
 
-Meteor.publish "admin", ->
-  return [] if !@userId? || !OrbitPermissions.userCan("delegate-and-revoke", "permissions", @userId)
-  Meteor.users.find {},
-    fields:
-      profile: 1
-      orbit_roles: 1
-      services: 1
 Meteor.publish "review", ->
   return [] if !@userId? || !OrbitPermissions.userCan("review-submissions", "dr", @userId)
   Submissions.find {reviewed: false, reviewer: @userId}

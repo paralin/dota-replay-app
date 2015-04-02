@@ -42,3 +42,15 @@ Meteor.methods
       throw new Meteor.Error 403, "You are not currently reviewing that submission."
     Submissions.update {_id: id}, {$set: {reviewed: true, rating: rating, reviewerDescription: descrip, status: 4}, $unset: {reviewerUntil: ""}}
     return
+  "adminUsersList": ->
+    if !@userId? || !OrbitPermissions.userCan("delegate-and-revoke", "permissions", @userId)
+      throw new Meteor.Error 403, "You cannot access this data."
+    users = Meteor.users.find {},
+      fields:
+        profile: 1
+        orbit_roles: 1
+        services: 1
+    users = users.fetch()
+    for user in users
+      user.reviewCount = Submissions.find({reviewed: true, reviewer: user._id}).count()
+    users

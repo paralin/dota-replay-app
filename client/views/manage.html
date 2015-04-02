@@ -1,32 +1,40 @@
 <template name="Manage">
 <div class="row">
   <div class="col-lg-12">
-    <div class="box">
-      <!--mail inbox start-->
-      <div class="mail-box">
-        <aside class="lg-side">
-          <div class="inbox-head">
-            <h3>Users</h3>
-          </div>
-          <div class="inbox-body">
-            <table class="table table-inbox table-hover">
-              <tbody>
-                {{#each this}}
-                <tr class="userRow">
-                  <td class="view-messag dont-show"><img alt="" src={{services.steam.avatar.small}} title="" style=""></td>
-                  <td class="view-message  dont-show">{{profile.name}}</td>
-                  <td class="view-message ">Lorem ipsum dolor imit set.</td>
-                  <td class="view-message  text-right">
-                  </td>
-                </tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </div>
-        </aside>
+    <div class="panel panel-primary panel-drop">
+      <div class="panel-heading">
+        <h3 class="panel-title">User List</h3>
       </div>
-      <!--mail inbox end-->
+      <div class="panel-body">
+        <table class="table table-bordered table-hover table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Reviewed</th>
+              <th style="width: 50px;text-align:right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each users}}
+            {{>userRow}}
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
+</template>
+<template name="userRow">
+<tr class="{{rowClass}}">
+  <td class="view-message" style="font-weight: bold">
+    {{profile.name}}
+  </td>
+  <td class="view-message">
+    {{reviewCount}}
+  </td>
+  <td class="view-message text-right">
+    <button class="btn btn-xs btn-danger pull-right" disabled=""><i class="fa fa-trash-o"></i></button>
+  </td>
+</tr>
 </template>

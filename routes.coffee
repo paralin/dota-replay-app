@@ -24,13 +24,20 @@ Router.route "/review/",
     return
 
 Router.route "/manage/",
-  subscriptions: ->
-    [Meteor.subscribe("admin")]
   action: ->
+    Meteor.call "adminUsersList", (err, res)->
+      if err?
+        swal
+          title: "Unable to Fetch Users"
+          text: err.reason
+          type: "error"
+      else
+        Session.set "adminUsers", res
+
     @layout "PanelLayout"
     @render "Manage",
       data: ->
-        Meteor.users.find {}
+        users: Session.get("adminUsers")
 
 Router.route "/submit/:_id", ->
   id = @params._id
