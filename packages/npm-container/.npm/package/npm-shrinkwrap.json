@@ -195,8 +195,19 @@
         }
       }
     },
+    "socks": {
+      "version": "1.1.7",
+      "dependencies": {
+        "ip": {
+          "version": "0.3.2"
+        },
+        "smart-buffer": {
+          "version": "1.0.1"
+        }
+      }
+    },
     "steam": {
-      "version": "https://github.com/paralin/node-steam/archive/cb71b0af1688cc492d62b8e7fc308458ddb655c1.tar.gz",
+      "version": "https://github.com/paralin/node-steam/archive/9d831bc2d83290ee41ebdadbca39ca36105d069d.tar.gz",
       "dependencies": {
         "adm-zip": {
           "version": "0.4.7"

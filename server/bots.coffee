@@ -64,6 +64,7 @@ downloadQueue = async.queue(Meteor.bindEnvironment((match, done)->
 ), 4)
 
 launchBot = (work)->
+  launchid = work.launchid = Random.id()
   if !work.bot?
     Meteor.setTimeout ->
       assignAndLaunch work
@@ -73,6 +74,7 @@ launchBot = (work)->
     console.log "skipping IP refresh as last change happened less than 5 mins ago"
   else
     console.log "requesting new ip for #{work._id}"
+    work.connectAttempts = 0
     try
       HTTP.post "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
       work.lastProxyUpdate = new Date()
@@ -83,6 +85,7 @@ launchBot = (work)->
       , 5000
       return
   continueLaunchBot = ->
+    return if launchid isnt work.launchid
     bot = work.client = new Bot({accountName: work.bot.Username, password: work.bot.Password}, {nick: work.bot.PersonaName})
     bot.on "dotaHelloTimeout", Meteor.bindEnvironment ->
       bot.log "dota ClientHello timeout, disabling this bot for 24 hours"
@@ -103,19 +106,25 @@ launchBot = (work)->
       bot.dota.launch()
     bot.on "dotaReady", Meteor.bindEnvironment ->
       fetchNext = ->
+        if launchid isnt work.launchid
+          bot.log "this bot is a duplicate #{work.launchid} != #{launchid}! shutting down"
+          bot.stop()
+          work.bot = null
+          return
         if work.bot.FetchTimes.length >= 91
           bot.log "this bot has fetched #{work.bot.FetchTimes.length} matches, rotating it out"
           bot.stop()
           work.bot = null
           assignAndLaunch work
           return
-        if downloadQueue.length() >= 30
-          console.log "more than 30 downloads waiting, postponing dota requests"
+        if downloadQueue.length() >= 15
+          bot.log "more than 15 downloads waiting, postponing dota requests"
           bot.setSessionTimeout ->
             fetchNext()
-          , 30000
+          , 15000
           return
         sub = Submissions.findOne {matchid: {$nin: fetchingIds}, $or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}
+        sapikey = process.env.STEAM_API_KEY
         if !sub?
           #bot.log "no submissions available, will re-check in 30 seconds"
           bot.setSessionTimeout ->
@@ -125,6 +134,20 @@ launchBot = (work)->
           fetchingIds.push sub.matchid
           sub.status = 1
           Submissions.update {_id: sub._id}, {$set: {status: 1}}
+          if sapikey?
+            bot.log "[#{sub.matchid}] checking replay web API to see if this replay can be skipped"
+            aresp = HTTP.call "GET", "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?key=#{sapikey}&match_id=#{sub.matchid}"
+            if aresp.statusCode is 200 and aresp.data? and aresp.data.result? and aresp.data.result.start_time?
+              matchDate = new Date(aresp.data.result.start_time*1000)
+              lastAcceptable = new Date()
+              lastAcceptable.setMinutes lastAcceptable.getMinutes()-20160
+              if matchDate.getTime() < lastAcceptable.getTime()
+                bot.log "[#{sub.matchid}] #{matchDate} is older than 2 weeks, skipping replay"
+                Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
+                bot.setSessionTimeout ->
+                  fetchNext()
+                , 1200
+                return
           bot.log "[#{sub.matchid}] requesting match data from DOTA"
           work.bot.FetchTimes = [] if !work.bot.FetchTimes?
           work.bot.FetchTimes.push (new Date()).getTime()
@@ -167,11 +190,24 @@ launchBot = (work)->
       fetchNext()
 
     server = Steam.randomServer()
+    work.connectAttempts++
     Socks.createConnection {proxy: {ipaddress: process.env.HMA_HOST, port: work.proxy.port, type: 5}, target: {host: server.host, port: server.port}}, Meteor.bindEnvironment (err, socket)->
       if err?
         console.log "error connecting, #{err}"
+        return if launchid isnt work.launchid
+        if work.connectAttempts > 15
+          console.log "#{work.connectAttempts} attempts to connect, this proxy must be bad. re-trying"
+          work.lastProxyUpdate = null
+          work.bot = null
+          work.connectAttempts = 0
+          assignAndLaunch work
+          return
         checkProxyDone()
       else
+        if launchid isnt work.launchid
+          socket.destroy() if socket? and socket.destroy?
+          return
+        work.connectAttempts = 0
         bot.startWithSocket socket
 
   checkProxyDone = ->
