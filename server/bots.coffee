@@ -4,6 +4,8 @@ util =  Meteor.npmRequire "util"
 fs =    Meteor.npmRequire "fs"
 async = Meteor.npmRequire "async"
 http =  Meteor.npmRequire "http"
+Socks = Meteor.npmRequire "socks"
+Steam = Meteor.npmRequire "steam"
 
 fetchingIds = []
 
@@ -63,103 +65,126 @@ downloadQueue = async.queue(Meteor.bindEnvironment((match, done)->
 
 launchBot = (work)->
   return if !work.bot?
-  bot = work.client = new Bot({accountName: work.bot.Username, password: work.bot.Password}, {nick: work.bot.PersonaName})
-  bot.on "dotaHelloTimeout", Meteor.bindEnvironment ->
-    bot.log "dota ClientHello timeout, disabling this bot for 24 hours"
-    bot.stop()
-    work.bot = null
-    assignAndLaunch work
-  bot.on "error", Meteor.bindEnvironment (err)->
-    # TODO: handle log on errors
-    if err.cause is "logonFail"
-      bot.log "login failure, marking this bot as invalid"
-      Bots.update {_id: work.bot._id}, {$set: {Invalid: true, InvalidReason: "Login failure, #{err.eresult}"}}
-    else
-      bot.log "unknown steam error, restarting bot"
-    bot.stop()
-    work.bot = null
-    assignAndLaunch work
-  bot.on "steamReady", Meteor.bindEnvironment ->
-    bot.dota.launch()
-  bot.on "dotaReady", Meteor.bindEnvironment ->
-    fetchNext = ->
-      if work.bot.FetchTimes.length >= 91
-        bot.log "this bot has fetched #{work.bot.FetchTimes.length} matches, rotating it out"
-        bot.stop()
-        work.bot = null
-        assignAndLaunch work
-        return
-      if downloadQueue.length() >= 30
-        console.log "more than 30 downloads waiting, postponing dota requests"
-        bot.setSessionTimeout ->
-          fetchNext()
-        , 30000
-        return
-      sub = Submissions.findOne {matchid: {$nin: fetchingIds}, $or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}
-      if !sub?
-        #bot.log "no submissions available, will re-check in 30 seconds"
-        bot.setSessionTimeout ->
-          fetchNext()
-        , 30000
+  console.log "requesting new ip for #{work._id}"
+  try
+    HTTP.post "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
+  catch err
+    console.log "error requesting new IP: #{err}"
+    Meteor.setTimeout ->
+      launchBot(work)
+    , 5000
+    return
+  continueLaunchBot = ->
+    bot = work.client = new Bot({accountName: work.bot.Username, password: work.bot.Password}, {nick: work.bot.PersonaName})
+    bot.on "dotaHelloTimeout", Meteor.bindEnvironment ->
+      bot.log "dota ClientHello timeout, disabling this bot for 24 hours"
+      bot.stop()
+      work.bot = null
+      assignAndLaunch work
+    bot.on "error", Meteor.bindEnvironment (err)->
+      # TODO: handle log on errors
+      if err.cause is "logonFail"
+        bot.log "login failure, marking this bot as invalid"
+        Bots.update {_id: work.bot._id}, {$set: {Invalid: true, InvalidReason: "Login failure, #{err.eresult}"}}
       else
-        fetchingIds.push sub.matchid
-        sub.status = 1
-        Submissions.update {_id: sub._id}, {$set: {status: 1}}
-        bot.log "[#{sub.matchid}] requesting match data from DOTA"
-        work.bot.FetchTimes = [] if !work.bot.FetchTimes?
-        work.bot.FetchTimes.push (new Date()).getTime()
-        Bots.update {_id: work.bot._id}, {$set: {FetchTimes: work.bot.FetchTimes}}
-        eres = Results.findOne {_id: "#{sub.matchid}"}
-        if eres?
-          bot.log "[#{sub.matchid}] already fetched, grabbing it again"
-        hasTimedOut = false
-        timeout = Meteor.setTimeout ->
-          hasTimedOut = true
-          bot.log "[#{sub.matchid}] request timed out, disabling bot"
-          nxt = new Date()
-          nxt.setMinutes nxt.getMinutes()+1440
-          Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
+        bot.log "unknown steam error, restarting bot"
+      bot.stop()
+      work.bot = null
+      assignAndLaunch work
+    bot.on "steamReady", Meteor.bindEnvironment ->
+      bot.dota.launch()
+    bot.on "dotaReady", Meteor.bindEnvironment ->
+      fetchNext = ->
+        if work.bot.FetchTimes.length >= 91
+          bot.log "this bot has fetched #{work.bot.FetchTimes.length} matches, rotating it out"
           bot.stop()
           work.bot = null
           assignAndLaunch work
-        , 15000
-        bot.dota.matchDetailsRequest sub.matchid, Meteor.bindEnvironment (err, resp)->
-          return if hasTimedOut
-          Meteor.clearTimeout timeout
-          if err? || !resp?
-            bot.log "error fetching #{sub.matchid}, #{JSON.stringify err}" if err?
-            bot.log "no response for #{sub.matchid}!" if !resp?
-            err = err || 0
-            Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: parseInt(err)}}
-          else
-            resp = resp.match
-            resp._id = "#{sub.matchid}"
-            Results.upsert {_id: resp._id}, resp
-            bot.log "[#{sub.matchid}] received match data"
-            if resp.replayState isnt "REPLAY_AVAILABLE"
-              bot.log "[#{sub.matchid}] replay not available, #{resp.replayState}"
-              Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -1, fetch_error_replay_state: resp.replayState}}
-            else
-              downloadQueue.push resp
+          return
+        if downloadQueue.length() >= 30
+          console.log "more than 30 downloads waiting, postponing dota requests"
           bot.setSessionTimeout ->
             fetchNext()
-          , 3000
-    fetchNext()
+          , 30000
+          return
+        sub = Submissions.findOne {matchid: {$nin: fetchingIds}, $or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}
+        if !sub?
+          #bot.log "no submissions available, will re-check in 30 seconds"
+          bot.setSessionTimeout ->
+            fetchNext()
+          , 30000
+        else
+          fetchingIds.push sub.matchid
+          sub.status = 1
+          Submissions.update {_id: sub._id}, {$set: {status: 1}}
+          bot.log "[#{sub.matchid}] requesting match data from DOTA"
+          work.bot.FetchTimes = [] if !work.bot.FetchTimes?
+          work.bot.FetchTimes.push (new Date()).getTime()
+          Bots.update {_id: work.bot._id}, {$set: {FetchTimes: work.bot.FetchTimes}}
+          eres = Results.findOne {_id: "#{sub.matchid}"}
+          if eres?
+            bot.log "[#{sub.matchid}] already fetched, grabbing it again"
+          hasTimedOut = false
+          timeout = Meteor.setTimeout ->
+            hasTimedOut = true
+            bot.log "[#{sub.matchid}] request timed out, disabling bot"
+            nxt = new Date()
+            nxt.setMinutes nxt.getMinutes()+1440
+            Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
+            bot.stop()
+            work.bot = null
+            assignAndLaunch work
+          , 15000
+          bot.dota.matchDetailsRequest sub.matchid, Meteor.bindEnvironment (err, resp)->
+            return if hasTimedOut
+            Meteor.clearTimeout timeout
+            if err? || !resp?
+              bot.log "error fetching #{sub.matchid}, #{JSON.stringify err}" if err?
+              bot.log "no response for #{sub.matchid}!" if !resp?
+              err = err || 0
+              Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: parseInt(err)}}
+            else
+              resp = resp.match
+              resp._id = "#{sub.matchid}"
+              Results.upsert {_id: resp._id}, resp
+              bot.log "[#{sub.matchid}] received match data"
+              if resp.replayState isnt "REPLAY_AVAILABLE"
+                bot.log "[#{sub.matchid}] replay not available, #{resp.replayState}"
+                Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -1, fetch_error_replay_state: resp.replayState}}
+              else
+                downloadQueue.push resp
+            bot.setSessionTimeout ->
+              fetchNext()
+            , 3000
+      fetchNext()
 
-  bot.start()
+    server = Steam.randomServer()
+    Socks.createConnection {proxy: {ipaddress: process.env.HMA_HOST, port: work.proxy.port, type: 5}, target: {host: server.host, port: server.port}}, (err, socket, info)->
+      if err?
+        console.log "error connecting, #{err}"
+        checkProxyDone()
+      else
+        bot.startWithSocket socket
 
+  checkProxyDone = ->
+    Meteor.setTimeout ->
+      res = HTTP.get "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
+      if res.statusCode is 200 and res.data.connected
+        console.log "proxy is ready, proceeding with bot launch"
+        continueLaunchBot()
+      else
+        console.log "still waiting for proxy to be ready"
+        checkProxyDone()
+    , 5000
+  checkProxyDone()
+
+Workers = []
 Meteor.startup ->
   Submissions.update {status: 1}, {$set: {status: 0}}, {multi: true}
-  console.log "starting #{workerCount} bot workers"
+  Workers = BotWorkers.find().fetch()
+  console.log "starting #{Workers.length} bot workers"
 
-  i = workerCount
-  x = 1
-  while i > 0
-    work = {_id: "bot#{x}"}
+  for work in Workers
     assignBotToWorker work
-    Workers.push work
     if work.bot?
       launchBot work
-    i--
-    x++
-
