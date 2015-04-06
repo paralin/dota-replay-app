@@ -84,7 +84,7 @@ launchBot = (work)->
   bot.on "dotaReady", Meteor.bindEnvironment ->
     fetchNext = ->
       if work.bot.FetchTimes.length >= 91
-        bot.log "[#{sub.matchid}] this bot has fetched #{work.bot.FetchTimes.length} matches, rotating it out"
+        bot.log "this bot has fetched #{work.bot.FetchTimes.length} matches, rotating it out"
         bot.stop()
         work.bot = null
         assignAndLaunch work

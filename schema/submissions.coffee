@@ -55,7 +55,7 @@ SubmissionSchema = new SimpleSchema
   # 2: Replay fetched, awaiting moderation
   # 3: Replay reviewed
   # 5: Replay invalid
-  # 6: Match ID already used
+  # 6: Reviewed already, replay file deleted
   status:
     type: Number
     label: "The status number of the submission"
