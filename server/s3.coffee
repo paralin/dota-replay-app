@@ -1,7 +1,7 @@
 AWS = Meteor.npmRequire "aws-sdk"
 knox = Meteor.npmRequire "knox"
 
-@s3config = {}
+s3config = {}
 config = {}
 
 if process.env.AWS_ACCESS_KEY?
