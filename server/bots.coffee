@@ -65,15 +65,19 @@ downloadQueue = async.queue(Meteor.bindEnvironment((match, done)->
 
 launchBot = (work)->
   return if !work.bot?
-  console.log "requesting new ip for #{work._id}"
-  try
-    HTTP.post "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
-  catch err
-    console.log "error requesting new IP: #{err}"
-    Meteor.setTimeout ->
-      launchBot(work)
-    , 5000
-    return
+  if work.lastProxyUpdate? && work.lastProxyUpdate.getTime()+300000 > (new Date()).getTime()
+    console.log "skipping IP refresh as last change happened less than 5 mins ago"
+  else
+    console.log "requesting new ip for #{work._id}"
+    try
+      HTTP.post "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
+      work.lastProxyUpdate = new Date()
+    catch err
+      console.log "error requesting new IP: #{err}"
+      Meteor.setTimeout ->
+        launchBot(work)
+      , 5000
+      return
   continueLaunchBot = ->
     bot = work.client = new Bot({accountName: work.bot.Username, password: work.bot.Password}, {nick: work.bot.PersonaName})
     bot.on "dotaHelloTimeout", Meteor.bindEnvironment ->
