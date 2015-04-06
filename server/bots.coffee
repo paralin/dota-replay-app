@@ -195,7 +195,7 @@ launchBot = (work)->
       if err?
         console.log "error connecting, #{err}"
         return if launchid isnt work.launchid
-        if work.connectAttempts > 15
+        if work.connectAttempts > 5
           console.log "#{work.connectAttempts} attempts to connect, this proxy must be bad. re-trying"
           work.lastProxyUpdate = null
           work.bot = null
