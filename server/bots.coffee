@@ -140,7 +140,7 @@ launchBot = (work)->
             if aresp.statusCode is 200 and aresp.data? and aresp.data.result? and aresp.data.result.start_time?
               matchDate = new Date(aresp.data.result.start_time*1000)
               lastAcceptable = new Date()
-              lastAcceptable.setMinutes lastAcceptable.getMinutes()-20160
+              lastAcceptable.setMinutes lastAcceptable.getMinutes()-15120
               if matchDate.getTime() < lastAcceptable.getTime()
                 bot.log "[#{sub.matchid}] #{matchDate} is older than 2 weeks, skipping replay"
                 Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
@@ -148,6 +148,10 @@ launchBot = (work)->
                   fetchNext()
                 , 1200
                 return
+              else
+                bot.log "[#{sub.matchid}] is not more than 1.5 weeks old, continuing"
+            else
+              bot.log "[#{sub.matchid}] response from web api #{aresp.statusCode}, continuing with checks..."
           bot.log "[#{sub.matchid}] requesting match data from DOTA"
           work.bot.FetchTimes = [] if !work.bot.FetchTimes?
           work.bot.FetchTimes.push (new Date()).getTime()
