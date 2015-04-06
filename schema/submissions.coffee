@@ -91,5 +91,11 @@ SubmissionSchema = new SimpleSchema
     min: 3
     max: 20
     optional: true
+  fetch_error:
+    type: Number
+    optional: true
+  fetch_error_replay_state:
+    type: String
+    optional: true
 
 Submissions.attachSchema SubmissionSchema

@@ -8,5 +8,13 @@ BotSchema = new SimpleSchema
   PersonaName:
     type: String
     optional: true
+  FetchTimes:
+    type: [Date]
+  DisableUntil:
+    type: Date
   Invalid:
     type: Boolean
+    optional: true
+  InvalidReason:
+    type: String
+    optional: true
