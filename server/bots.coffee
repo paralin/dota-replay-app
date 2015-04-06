@@ -159,7 +159,7 @@ launchBot = (work)->
       fetchNext()
 
     server = Steam.randomServer()
-    Socks.createConnection {proxy: {ipaddress: process.env.HMA_HOST, port: work.proxy.port, type: 5}, target: {host: server.host, port: server.port}}, (err, socket, info)->
+    Socks.createConnection {proxy: {ipaddress: process.env.HMA_HOST, port: work.proxy.port, type: 5}, target: {host: server.host, port: server.port}}, Meteor.bindEnvironment (err, socket)->
       if err?
         console.log "error connecting, #{err}"
         checkProxyDone()
