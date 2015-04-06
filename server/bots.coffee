@@ -89,6 +89,12 @@ launchBot = (work)->
         work.bot = null
         assignAndLaunch work
         return
+      if downloadQueue.length() >= 30
+        console.log "more than 30 downloads waiting, postponing dota requests"
+        bot.setSessionTimeout ->
+          fetchNext()
+        , 30000
+        return
       sub = Submissions.findOne {matchid: {$nin: fetchingIds}, $or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}
       if !sub?
         #bot.log "no submissions available, will re-check in 30 seconds"
@@ -130,7 +136,6 @@ launchBot = (work)->
             resp._id = "#{sub.matchid}"
             Results.upsert {_id: resp._id}, resp
             bot.log "[#{sub.matchid}] received match data"
-            bot.log JSON.stringify resp
             if resp.replayState isnt "REPLAY_AVAILABLE"
               bot.log "[#{sub.matchid}] replay not available, #{resp.replayState}"
               Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -1, fetch_error_replay_state: resp.replayState}}
@@ -138,7 +143,7 @@ launchBot = (work)->
               downloadQueue.push resp
           bot.setSessionTimeout ->
             fetchNext()
-          , 1000
+          , 3000
     fetchNext()
 
   bot.start()
