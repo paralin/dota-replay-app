@@ -1,6 +1,6 @@
 FROM debian:jessie
 
-RUN apt-get update && apt-get install -y curl git build-essential && curl -sL https://deb.nodesource.com/setup | bash - && apt-get install -y nodejs && apt-get clean
+RUN apt-get update && apt-get install -y subversion curl git build-essential && curl -sL https://deb.nodesource.com/setup | bash - && apt-get install -y nodejs && apt-get clean
 RUN curl https://install.meteor.com/ | sh
 
 ADD . /build/
