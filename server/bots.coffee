@@ -193,6 +193,4 @@ Meteor.startup ->
   console.log "starting #{Workers.length} bot workers"
 
   for work in Workers
-    assignBotToWorker work
-    if work.bot?
-      launchBot work
+    assignAndLaunch work
