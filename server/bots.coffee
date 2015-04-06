@@ -64,7 +64,11 @@ downloadQueue = async.queue(Meteor.bindEnvironment((match, done)->
 ), 4)
 
 launchBot = (work)->
-  return if !work.bot?
+  if !work.bot?
+    Meteor.setTimeout ->
+      assignAndLaunch work
+    , 10000
+    return
   if work.lastProxyUpdate? && work.lastProxyUpdate.getTime()+300000 > (new Date()).getTime()
     console.log "skipping IP refresh as last change happened less than 5 mins ago"
   else
