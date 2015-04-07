@@ -242,7 +242,7 @@ Workers = []
 Meteor.startup ->
   lastAcceptable = getExpiredTime()
   Submissions.update {status: 1}, {$set: {status: 0}}, {multi: true}
-  Submissions.update {createdAt: {$lt: lastAcceptable}}, {$set: {status: 5, fetch_error: -5}}, {multi: true}, (err, aff)->
+  Submissions.update {status: 0, createdAt: {$lt: lastAcceptable}}, {$set: {status: 5, fetch_error: -5}}, {multi: true}, (err, aff)->
     console.log "cleared #{aff} known expired replays"
 
   Workers = BotWorkers.find().fetch()

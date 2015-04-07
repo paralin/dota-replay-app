@@ -30,3 +30,45 @@ s3 = new AWS.S3 {params: s3config}
 @GetSignedURL = (key,expires)->
   expires = expires || 60
   s3.getSignedUrl "getObject", {Key: key, Expires: 60}
+
+Meteor.startup ->
+  console.log "checking entire s3 bucket..."
+  allKeys = []
+
+  listAllKeys = (marker, cb) ->
+    s3.listObjects {
+      Bucket: s3bucket
+      Marker: marker
+    }, (err, data) ->
+      for item in data.Contents
+        allKeys.push item.Key unless item.Key in allKeys
+      if data.IsTruncated
+        listAllKeys data.Contents.slice(-1)[0].Key, cb
+      else
+        cb()
+      return
+    return
+
+  listAllKeys "", Meteor.bindEnvironment ->
+    console.log "#{allKeys.length} files in amazon s3"
+    matchIds = allKeys.map (key)->
+      parseInt(key.replace(".dem.bz2", ""))
+
+    # Find submissions that are marked as downloaded but aren't in the array
+    msubs = Submissions.update {status: 2, matchid: {$nin: matchIds}}, {$set: {status: 0}}, {multi: true}, (err, aff)->
+      console.log "#{aff} downloaded submissions don't exist in s3, resetting them"
+
+    subs = Submissions.find({matchid: {$in: matchIds}}).fetch()
+    for sub in subs
+      matchIds = _.without matchIds, sub.matchid
+    toRemove = matchIds.map (id)->
+      "/#{id}.dem.bz2"
+    console.log "removing #{JSON.stringify toRemove} as they don't match any submissions in the system"
+    if process.env.ENABLE_CULL_UNKNOWN?
+      knoxClient.deleteMultiple toRemove, (err, res)->
+        if err?
+          console.log "unable to remove #{err}"
+        else
+          console.log "removed them"
+    else
+      console.log "... but not really because ENABLE_CULL_UNKNOWN isn't enabled"
