@@ -55,8 +55,8 @@ Meteor.startup ->
       parseInt(key.replace(".dem.bz2", ""))
 
     # Find submissions that are marked as downloaded but aren't in the array
-    msubs = Submissions.update {status: 2, matchid: {$nin: matchIds}}, {$set: {status: 0}}, {multi: true}, (err, aff)->
-      console.log "#{aff} downloaded submissions don't exist in s3, resetting them"
+    msubs = Submissions.update {status: {$in: [2, 3]}, matchid: {$nin: matchIds}}, {$set: {status: 0, reviewed: false}, $unset: {reviewer: "", reviewerUntil: ""}}, {multi: true}, (err, aff)->
+      console.log "reset #{aff} downloaded submissions that don't exist in s3"
 
     subs = Submissions.find({matchid: {$in: matchIds}}).fetch()
     for sub in subs

@@ -53,7 +53,8 @@ SubmissionSchema = new SimpleSchema
   # 0: Submitted to replay server
   # 1: Being fetched by replay server
   # 2: Replay fetched, awaiting moderation
-  # 3: Replay reviewed
+  # 3: Replay being reviewed
+  # 4: Replay reviewed
   # 5: Replay invalid
   # 6: Reviewed already, replay file deleted
   status:

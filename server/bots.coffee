@@ -205,9 +205,9 @@ launchBot = (work)->
     work.connectAttempts++
     Socks.createConnection {proxy: {ipaddress: process.env.HMA_HOST, port: work.proxy.port, type: 5}, target: {host: server.host, port: server.port}}, Meteor.bindEnvironment (err, socket)->
       if err?
-        console.log "error connecting, #{err}"
+        console.log "error connecting, #{err}, attempt #{work.connectAttempts}/6"
         return if launchid isnt work.launchid
-        if work.connectAttempts > 5
+        if work.connectAttempts >= 6
           console.log "#{work.connectAttempts} attempts to connect, this proxy must be bad. re-trying"
           work.lastProxyUpdate = null
           work.bot = null
@@ -230,7 +230,6 @@ launchBot = (work)->
       catch err
         res = err.response
       if res.statusCode is 200 and res.data.connected
-        console.log "proxy is ready, proceeding with bot launch"
         continueLaunchBot()
       else
         console.log "still waiting for proxy to be ready"
