@@ -37,7 +37,7 @@ Meteor.startup ->
 
   listAllKeys = (marker, cb) ->
     s3.listObjects {
-      Bucket: s3bucket
+      Bucket: s3config.Bucket
       Marker: marker
     }, (err, data) ->
       for item in data.Contents
