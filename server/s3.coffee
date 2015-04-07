@@ -28,8 +28,8 @@ console.log "Using S3 bucket: #{s3config.Bucket}"
 s3 = new AWS.S3 {params: s3config}
 
 @GetSignedURL = (key,expires)->
-  expires = expires || 60
-  s3.getSignedUrl "getObject", {Key: key, Expires: 60}
+  expires = expires || 600
+  s3.getSignedUrl "getObject", {Key: key, Expires: expires}
 
 Meteor.startup ->
   console.log "checking entire s3 bucket..."
