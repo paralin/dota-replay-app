@@ -9,6 +9,11 @@ Steam = Meteor.npmRequire "steam"
 
 fetchingIds = []
 
+getExpiredTime = ->
+  lastAcceptable = new Date()
+  lastAcceptable.setMinutes lastAcceptable.getMinutes()-15120
+  lastAcceptable
+
 cleanupBotCooldowns = (bot)->
   res = _.clone(bot.FetchTimes || [])
   now = new Date().getTime()
@@ -136,11 +141,14 @@ launchBot = (work)->
           Submissions.update {_id: sub._id}, {$set: {status: 1}}
           if sapikey?
             bot.log "[#{sub.matchid}] checking replay web API to see if this replay can be skipped"
-            aresp = HTTP.call "GET", "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?key=#{sapikey}&match_id=#{sub.matchid}"
+            aresp = {}
+            try
+              aresp = HTTP.call "GET", "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?key=#{sapikey}&match_id=#{sub.matchid}"
+            catch herr
+              aresp = herr.response
             if aresp.statusCode is 200 and aresp.data? and aresp.data.result? and aresp.data.result.start_time?
               matchDate = new Date(aresp.data.result.start_time*1000)
-              lastAcceptable = new Date()
-              lastAcceptable.setMinutes lastAcceptable.getMinutes()-15120
+              lastAcceptable = getExpiredTime()
               if matchDate.getTime() < lastAcceptable.getTime()
                 bot.log "[#{sub.matchid}] #{matchDate} is older than 2 weeks, skipping replay"
                 Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
@@ -216,7 +224,11 @@ launchBot = (work)->
 
   checkProxyDone = ->
     Meteor.setTimeout ->
-      res = HTTP.get "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
+      res = {}
+      try
+        res = HTTP.get "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
+      catch err
+        res = err.response
       if res.statusCode is 200 and res.data.connected
         console.log "proxy is ready, proceeding with bot launch"
         continueLaunchBot()
@@ -228,7 +240,11 @@ launchBot = (work)->
 
 Workers = []
 Meteor.startup ->
+  lastAcceptable = getExpiredTime()
   Submissions.update {status: 1}, {$set: {status: 0}}, {multi: true}
+  Submissions.update {createdAt: {$lt: lastAcceptable}}, {$set: {status: 5, fetch_error: -5}}, {multi: true}, (err, aff)->
+    console.log "cleared #{aff} known expired replays"
+
   Workers = BotWorkers.find().fetch()
   console.log "starting #{Workers.length} bot workers"
 
