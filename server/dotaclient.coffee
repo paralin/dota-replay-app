@@ -14,9 +14,12 @@ class Bot
     @intervals = []
     @timeouts = []
     @dotaRunning = false
+    @startedWithSocket = false
   start: ->
+    @startedWithSocket = false
     @bot.logOn @loginInfo
   startWithSocket: (socket)->
+    @startedWithSocket = true
     @bot.logOn @loginInfo,
       customSocket: socket
       socketConnected: true
@@ -122,8 +125,11 @@ class Bot
     bot.on 'loggedOff', =>
       @log "Logged off!"
       @fire "steamUnready"
-      @clearSessionTimeouts()
-      @clearSessionIntervals()
+      if @startedWithSocket
+        @stop()
+      else
+        @clearSessionTimeouts()
+        @clearSessionIntervals()
       return
     bot.on 'chatInvite', (chatRoomID, chatRoomName, patronID) =>
       @log 'Got an invite to ' + chatRoomName + ' from ' + bot.users[patronID].playerName

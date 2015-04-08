@@ -109,6 +109,9 @@ launchBot = (work)->
       assignAndLaunch work
     bot.on "steamReady", Meteor.bindEnvironment ->
       bot.dota.launch()
+    bot.on "steamUnready", Meteor.bindEnvironment ->
+      bot.log "logged off, restarting the bot"
+      checkProxyDone()
     bot.on "dotaReady", Meteor.bindEnvironment ->
       fetchNext = ->
         if launchid isnt work.launchid
