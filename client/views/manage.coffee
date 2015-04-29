@@ -3,6 +3,9 @@ Template.Manage.events
     e.stopImmediatePropagation()
     url = "http://steamcommunity.com/profiles/#{@services.steam.id}"
     window.open(url,'_blank')
+  "click .toggleAccess": (e)->
+    e.stopImmediatePropagation()
+    Meteor.call "toggleReview", @_id
 Template.userRow.helpers
   "rowClass": ->
     bc = "userRow"

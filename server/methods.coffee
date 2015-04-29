@@ -55,3 +55,13 @@ Meteor.methods
       user.reviewCount = Submissions.find({reviewed: true, reviewer: user._id}).count()
       user.canReview = OrbitPermissions.userCan "review-submissions", "dr", user._id
     _.sortBy(users, "reviewCount").reverse()
+  "toggleReview": (id)->
+    check id, String
+    if !@userId? || !OrbitPermissions.userCan("delegate-and-revoke", "permissions", @userId)# || OrbitPermissions.userCan("delegate-and-revoke", "permissions", id)
+      throw new Meteor.Error 403, "You cannot access this data."
+    roles = OrbitPermissions.getUserRoles id
+    if "dr:review" in roles
+      OrbitPermissions.revoke id, ["dr:review"]
+    else
+      OrbitPermissions.delegate id, ["dr:review"]
+    true

@@ -9,7 +9,7 @@ blaze@2.1.2
 blaze-tools@1.0.3
 boilerplate-generator@1.0.3
 callback-hook@1.0.3
-cfs:http-methods@0.0.27
+cfs:http-methods@0.0.29
 check@1.0.5
 chuangbo:marked@0.3.5
 coffeescript@1.0.6
@@ -50,7 +50,7 @@ mizzao:bootstrap-3@3.3.1_1
 mizzao:timesync@0.3.1
 mizzao:user-status@0.6.4
 mobile-status-bar@1.0.3
-momentjs:moment@2.9.0
+momentjs:moment@2.10.3
 mongo@1.1.0
 natestrauser:connection-banner@0.4.3
 npm-container@1.0.0
@@ -78,8 +78,8 @@ templating@1.1.1
 tracker@1.0.7
 ui@1.0.6
 underscore@1.0.3
+underscorestring:underscore.string@3.0.3
 url@1.0.4
 webapp@1.2.0
 webapp-hashing@1.0.3
-wizonesolutions:underscore-string@1.0.0
-zimme:iron-router-active@1.0.1
+zimme:iron-router-active@1.0.4
