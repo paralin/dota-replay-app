@@ -5,7 +5,8 @@ Template.Manage.events
     window.open(url,'_blank')
   "click .toggleAccess": (e)->
     e.stopImmediatePropagation()
-    Meteor.call "toggleReview", @_id
+    Meteor.call "toggleReview", @_id, (err)->
+      ManageDep.changed()
 Template.userRow.helpers
   "rowClass": ->
     bc = "userRow"

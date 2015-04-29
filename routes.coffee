@@ -23,8 +23,11 @@ Router.route "/review/",
     @render "Review"
     return
 
+@ManageDep = new Tracker.Dependency()
+
 Router.route "/manage/",
   action: ->
+    ManageDep.depend()
     Meteor.call "adminUsersList", (err, res)->
       if err?
         swal
