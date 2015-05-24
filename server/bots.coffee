@@ -235,7 +235,8 @@ launchBot = (work)->
       if res.statusCode is 200 and res.data.connected
         continueLaunchBot()
       else
-        console.log "still waiting for proxy to be ready"
+        console.log "still waiting for proxy #{work.proxy.api} to be ready"
+        console.log res
         checkProxyDone()
     , 5000
   checkProxyDone()

@@ -11,6 +11,6 @@ RUN cd /build && rm -rf /build/packages/npm-container/.npm/package && meteor bui
 WORKDIR /app/
 ENV PORT=80
 
-CMD ["node", "main.js"]
+CMD export MONGO_URL=$MONGODB_URL && node main.js
 
 EXPOSE 80 10304

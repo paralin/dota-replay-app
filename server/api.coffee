@@ -56,7 +56,7 @@ Router.route('/api/submissions/create', { where: 'server' })
       return
     Submissions.insert sub, (err)=>
       if err?
-        throwErr @response, 403, err.sanitizedError.reason
+        throwErr @response, 403, err.reason
         return
       else
         @response.writeHead 200
