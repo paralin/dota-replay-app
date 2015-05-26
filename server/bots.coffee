@@ -93,10 +93,16 @@ launchBot = (work)->
     return if launchid isnt work.launchid
     bot = work.client = new Bot({accountName: work.bot.Username, password: work.bot.Password}, {nick: work.bot.PersonaName})
     bot.on "dotaHelloTimeout", Meteor.bindEnvironment ->
-      bot.log "dota ClientHello timeout, disabling this bot for 24 hours"
-      bot.stop()
-      work.bot = null
-      assignAndLaunch work
+      if bot.dota._gcConnectionStatus in [1, 3]
+        bot.log "ClientHello timeout, but GC status is #{bot.dota._gcConnectionStatus} indicating downtime"
+      else
+        bot.log "dota ClientHello timeout, status #{bot.dota._gcConnectionStatus}, disabling this bot for 1 hour"
+        nxt = new Date()
+        nxt.setMinutes nxt.getMinutes()+60
+        Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
+        bot.stop()
+        work.bot = null
+        assignAndLaunch work
     bot.on "error", Meteor.bindEnvironment (err)->
       # TODO: handle log on errors
       if err.cause is "logonFail"
@@ -173,9 +179,9 @@ launchBot = (work)->
           hasTimedOut = false
           timeout = Meteor.setTimeout ->
             hasTimedOut = true
-            bot.log "[#{sub.matchid}] request timed out, disabling bot"
+            bot.log "[#{sub.matchid}] request timed out, disabling bot for 5 hours"
             nxt = new Date()
-            nxt.setMinutes nxt.getMinutes()+1440
+            nxt.setMinutes nxt.getMinutes()+300
             Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
             bot.stop()
             work.bot = null
