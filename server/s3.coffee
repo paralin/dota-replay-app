@@ -59,17 +59,14 @@ Meteor.startup ->
       msubs = Submissions.update {status: {$in: [2, 3]}, matchid: {$nin: matchIds}}, {$set: {status: 0, reviewed: false}, $unset: {reviewer: "", reviewerUntil: ""}}, {multi: true}, (err, aff)->
         console.log "reset #{aff} downloaded submissions that don't exist in s3"
 
-      subs = Submissions.find({matchid: {$in: matchIds}}).fetch()
+      subs = Submissions.find({matchid: {$in: matchIds}, status: {$lte: 4}}).fetch()
       for sub in subs
         matchIds = _.without matchIds, sub.matchid
       toRemove = matchIds.map (id)->
         "/#{id}.dem.bz2"
       console.log "removing #{JSON.stringify toRemove} as they don't match any submissions in the system"
-      if process.env.ENABLE_CULL_UNKNOWN?
-        knoxClient.deleteMultiple toRemove, (err, res)->
-          if err?
-            console.log "unable to remove #{err}"
-          else
-            console.log "removed them"
-      else
-        console.log "... but not really because ENABLE_CULL_UNKNOWN isn't enabled"
+      knoxClient.deleteMultiple toRemove, (err, res)->
+        if err?
+          console.log "unable to remove #{err}"
+        else
+          console.log "removed them"

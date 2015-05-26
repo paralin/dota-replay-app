@@ -1,3 +1,9 @@
+Array::chunk = (chunkSize) ->
+  array = this
+  [].concat.apply [], array.map((elem, i) ->
+    if i % chunkSize then [] else [ array.slice(i, i + chunkSize) ]
+  )
+
 Meteor.startup ->
   cullOld = ->
     console.log "checking replay files to cull..."
@@ -11,16 +17,17 @@ Meteor.startup ->
     for cull in toCull
       toCullIds.push cull._id
       filesToDelete.push "#{cull.matchid}.dem.bz2"
-    console.log "about to cull: #{JSON.stringify filesToDelete}"
-    if process.env.ENABLE_CULL_OLD?
+    if process.env.ENABLE_CULL_OLD? and filesToDelete.length > 0
+      console.log "about to cull #{filesToDelete.length} files"
       Submissions.update {_id: {$in: toCullIds}}, {$set: {status: 6}}, {multi: true}
-      knoxClient.deleteMultiple filesToDelete, (err, res)->
-        if err?
-          console.log "cannot delete culled submission files, #{err}"
-        else
-          console.log "=== PURGED #{filesToDelete.length} FILES FROM AWS ==="
-     else
-       console.log "not actually culling since ENABLE_CULL_OLD is not enabled"
+      for files in filesToDelete.chunk(999)
+        knoxClient.deleteMultiple files, (err, res)->
+          if err?
+            console.log "cannot delete culled submission files, #{err}"
+          else
+            console.log "=== PURGED #{files.length} FILES FROM AWS ==="
+    else
+      console.log "not actually culling since ENABLE_CULL_OLD is not enabled"
   Meteor.setInterval ->
     cullOld()
   , 3600000
