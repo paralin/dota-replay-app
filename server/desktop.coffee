@@ -51,8 +51,8 @@ class Client
   sendStats: ->
     allSubs = Submissions.find({}, {fields: {_id: 1}})
     needReview = Submissions.find({status: 2}, {fields: {_id: 1}})
-    reviewed = Submissions.find({status: 4}, {fields: {_id: 1}})
-    reviewedByYou = Submissions.find({status: 4, reviewer: @uid}, {fields: {_id: 1}})
+    reviewed = Submissions.find({status: {$in: [4, 6]}}, {fields: {_id: 1}})
+    reviewedByYou = Submissions.find({status: {$in: [4, 6]}, reviewer: @uid}, {fields: {_id: 1}})
     @sendMsg {m: 5, allSubmissions: allSubs.count(), needReview: needReview.count(), reviewed: reviewed.count(), reviewedByYou: reviewedByYou.count()}
   processMessage: (msg)->
     console.log "Received message: "+msg
