@@ -1,3 +1,5 @@
+json2csv = Meteor.npmRequire "json2csv"
+
 throwErr = (resp, code, descrip)->
   console.log "=== API ERROR ==="
   resp.writeHead code
@@ -114,3 +116,29 @@ Router.route('/download_match/:matchid', { where: 'server' })
       status: 200
       data: url
       error: null
+
+Router.route('/api/submissions/dumpcsv', { where: 'server' })
+  .get ->
+    subs = Submissions.find({status: 4, legacyUsed: null}, {sort: {rating: -1}}).fetch()
+
+    @response.writeHead 200,
+      "Content-Disposition": "attachment;filename=submissions.csv"
+
+    for sub in subs
+      user = Meteor.users.findOne {_id: sub.reviewer}
+      if user?
+        sub.reviewerName = user.profile.name
+
+    res = json2csv {data: subs, fields: ["rating", "show", "matchid", "hero_to_watch", "uname", "reviewerDescription", "description", "reviewerName", "matchtime"]}, (err, csv)=>
+      if err?
+        console.log "Error generating sheet #{err}"
+      else
+        console.log "Generated sheet, length #{csv.length}"
+      @response.end csv
+
+Router.route('/api/submissions/markold', { where: 'server' })
+  .get ->
+    subs = Submissions.update({status: 4}, {$set: {legacyUsed: true}})
+
+    @response.writeHead 200
+    @response.end "Done"
