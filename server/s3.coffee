@@ -65,7 +65,7 @@ Meteor.startup ->
       toRemove = matchIds.map (id)->
         "/#{id}.dem.bz2"
       console.log "removing #{JSON.stringify toRemove} as they don't match any submissions in the system"
-      for files in toRemove.chunk(100)
+      toRemove.chunk(100).forEach (files)->
         knoxClient.deleteMultiple files, (err, res)->
           if err?
             console.log "unable to remove #{err}"
