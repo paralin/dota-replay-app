@@ -95,11 +95,11 @@ class Client
         when 1
           sub = {}
           if !jmsg.matchid
-            sub = Submissions.findOne {_id: jmsg.id, reviewer: @uid}
+            sub = Submissions.findOne {_id: jmsg.id, reviewer: @uid, status: {$ne: 6}}
           else
-            sub = Submissions.findOne {matchid: parseInt(jmsg.id)}
+            sub = Submissions.findOne {matchid: parseInt(jmsg.id), status: {$ne: 6}}
           if !sub?
-            return @sendMsg {m: 6, id: jmsg.id, success: false, reason: "Can't find that submission. Try again."}
+            return @sendMsg {m: 6, id: jmsg.id, success: false, reason: "Can't find that submission, or the replay file has been deleted."}
           url = GetSignedURL "#{sub.matchid}.dem.bz2"
           @sendMsg {m: 6, success: true, id: jmsg.id, url: url, matchid: sub.matchid, matchtime: sub.matchtime}
         when 2
