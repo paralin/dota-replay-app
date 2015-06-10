@@ -11,7 +11,7 @@ Meteor.startup ->
     since.setMinutes since.getMinutes()-43829
     sinceLong = new Date()
     sinceLong.setHours since.getHours()-1095
-    toCull = Submissions.find({status: 4, $or: [{rating: {$lte: 5}, createdAt: {$lt: since}}, {createdAt: {$lt: sinceLong}}]}).fetch()
+    toCull = Submissions.find({status: 4, $or: [{rating: {$lte: 5}, createdAt: {$lt: since}}, {createdAt: {$lt: sinceLong}, rating: {$lt: 8}}]}).fetch()
     toCullIds = []
     filesToDelete = []
     for cull in toCull
