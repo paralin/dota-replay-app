@@ -138,7 +138,7 @@ Router.route('/api/submissions/dumpcsv', { where: 'server' })
 
 Router.route('/api/submissions/markold', { where: 'server' })
   .get ->
-    subs = Submissions.update({status: 4}, {$set: {legacyUsed: true}})
+    subs = Submissions.update({status: 4}, {$set: {legacyUsed: true}}, {multi: true})
 
     @response.writeHead 200
     @response.end "Done"
