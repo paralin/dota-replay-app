@@ -75,9 +75,10 @@ launchBot = (work)->
       assignAndLaunch work
     , 10000
     return
-  if work.lastProxyUpdate? && work.lastProxyUpdate.getTime()+300000 > (new Date()).getTime()
-    console.log "skipping IP refresh as last change happened less than 5 mins ago"
-  else
+  #if work.lastProxyUpdate? && work.lastProxyUpdate.getTime()+300000 > (new Date()).getTime()
+  #  console.log "skipping IP refresh as last change happened less than 5 mins ago"
+  #else
+  unless false
     console.log "requesting new ip for #{work._id}"
     work.connectAttempts = 0
     try
