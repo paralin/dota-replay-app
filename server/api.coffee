@@ -86,7 +86,7 @@ Router.route('/api/submissions/bymatchid/:mid', { where: 'server' })
     @response.end JSON.stringify
       status: status
       data: match
-      error: if match? then "Not found" else null
+      error: if match? then null else "Not found."
 
 roleSet =
   secret: ""
