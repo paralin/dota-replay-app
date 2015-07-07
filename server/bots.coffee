@@ -121,6 +121,9 @@ launchBot = (work)->
       checkProxyDone()
     bot.on "dotaReady", Meteor.bindEnvironment ->
       fetchNext = ->
+        unless bot.dota._gcReady
+          bot.log "GC is no longer ready, waiting..."
+          return
         if launchid isnt work.launchid
           bot.log "this bot is a duplicate #{work.launchid} != #{launchid}! shutting down"
           bot.stop()
@@ -180,6 +183,11 @@ launchBot = (work)->
           hasTimedOut = false
           timeout = Meteor.setTimeout ->
             hasTimedOut = true
+            unless bot.dota._gcReady
+              bot.log "[#{sub.matchid}] request timed out, but GC is not ready."
+              fetchingIds = _.without fetchingIds sub.matchid
+              Submissions.update {_id: sub._id}, {$set: {status: 0}}
+              return
             bot.log "[#{sub.matchid}] request timed out, disabling bot for 5 hours"
             nxt = new Date()
             nxt.setMinutes nxt.getMinutes()+300
