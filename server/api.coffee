@@ -67,6 +67,14 @@ Router.route('/api/submissions/create', { where: 'server' })
           data: null
           error: null
 
+Router.route('/api/submissions/byuid/:uid', { where: 'server' })
+  .get ->
+    return unless verifyToken @request
+    @response.writeHead 200
+    @response.end JSON.stringify
+      status: 200
+      data: Submissions.find({uid: @params.uid}).fetch()
+
 roleSet =
   secret: ""
   steamid: ""
