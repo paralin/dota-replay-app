@@ -75,6 +75,19 @@ Router.route('/api/submissions/byuid/:uid', { where: 'server' })
       status: 200
       data: Submissions.find({uid: @params.uid}).fetch()
 
+Router.route('/api/submissions/bymatchid/:mid', { where: 'server' })
+  .get ->
+    return unless verifyToken @request
+
+    match = Submissions.findOne {matchid: parseInt(@params.mid)}
+
+    status = if match? then 200 else 404
+    @response.writeHead status
+    @response.end JSON.stringify
+      status: status
+      data: match
+      error: if match? then "Not found" else null
+
 roleSet =
   secret: ""
   steamid: ""
