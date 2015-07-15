@@ -6,6 +6,7 @@ async = Meteor.npmRequire "async"
 http =  Meteor.npmRequire "http"
 Socks = Meteor.npmRequire "socks"
 Steam = Meteor.npmRequire "steam"
+Dota2 = Meteor.npmRequire "dota2"
 
 fetchingIds = []
 
@@ -94,16 +95,18 @@ launchBot = (work)->
     return if launchid isnt work.launchid
     bot = work.client = new Bot({accountName: work.bot.Username, password: work.bot.Password}, {nick: work.bot.PersonaName})
     bot.on "dotaHelloTimeout", Meteor.bindEnvironment ->
-      if bot.dota._gcConnectionStatus in [1, 3]
+      sta = Dota2.GCConnectionStatus
+      if bot.dota._gcConnectionStatus in [sta.GCConnectionStatus_GC_GOING_DOWN, sta.GCConnectionStatus_NO_SESSION_IN_LOGON_QUEUE, sta.GCConnectionStatus_NO_STEAM]
         bot.log "ClientHello timeout, but GC status is #{bot.dota._gcConnectionStatus} indicating downtime"
       else
-        bot.log "dota ClientHello timeout, status #{bot.dota._gcConnectionStatus}, disabling this bot for 1 hour"
-        nxt = new Date()
-        nxt.setMinutes nxt.getMinutes()+60
-        Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
+        if work? and work.bot?
+          bot.log "dota ClientHello timeout, status #{bot.dota._gcConnectionStatus}, disabling this bot for 1 hour"
+          nxt = new Date()
+          nxt.setMinutes nxt.getMinutes()+60
+          Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
+          work.bot = null
+          assignAndLaunch work
         bot.stop()
-        work.bot = null
-        assignAndLaunch work
     bot.on "error", Meteor.bindEnvironment (err)->
       # TODO: handle log on errors
       if err.cause is "logonFail"
