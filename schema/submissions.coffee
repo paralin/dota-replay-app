@@ -32,7 +32,7 @@ SubmissionSchema = new SimpleSchema
     type: String
     label: "Description of the submission"
     min: 0
-    max: 300
+    max: 400
   matchid:
     type: Number
     label: "Match ID of the submission"
