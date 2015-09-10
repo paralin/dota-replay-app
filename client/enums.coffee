@@ -6,7 +6,7 @@
     3: "Currently being reviewed..."
     4: "Review complete."
     5: "Replay isn't available."
-    6: "Replay file deleted/incompatible or invalid match ID."
+    6: "Incompatible/expired."
     7: "Access denied to replay."
 Template.registerHelper "replayStatus", (status)->
   enums.replayStatus[status]
