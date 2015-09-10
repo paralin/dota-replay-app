@@ -11,8 +11,11 @@ Dota2 = Meteor.npmRequire "dota2"
 fetchingIds = []
 
 getExpiredTime = ->
+  rebornEnabled = new Date("2015-09-09T19:00:00-05:00")
   lastAcceptable = new Date()
   lastAcceptable.setMinutes lastAcceptable.getMinutes()-15120
+  if lastAcceptable.getTime() < rebornEnabled.getTime()
+    return rebornEnabled
   lastAcceptable
 
 cleanupBotCooldowns = (bot)->
@@ -166,7 +169,7 @@ launchBot = (work)->
               matchDate = new Date(aresp.data.result.start_time*1000)
               lastAcceptable = getExpiredTime()
               if matchDate.getTime() < lastAcceptable.getTime()
-                bot.log "[#{sub.matchid}] #{matchDate} is older than 2 weeks, skipping replay"
+                bot.log "[#{sub.matchid}] #{matchDate} is older than 2 weeks or pre-reborn, skipping replay"
                 Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
                 bot.setSessionTimeout ->
                   fetchNext()
