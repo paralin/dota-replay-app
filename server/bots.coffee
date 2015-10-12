@@ -16,7 +16,7 @@ getExpiredTime = ->
   lastAcceptable
 
 jobQueue = JobCollection("downloadJobQueue")
-jobQueue.processJobs "downloadReplay", {concurrency: 3, payload: 1, prefetch: 1, workTimeout: 30000}, (job, cb)->
+jobQueue.processJobs "downloadReplay", {concurrency: 5, payload: 1, prefetch: 1, workTimeout: 30000}, (job, cb)->
   data = Results.findOne {_id: "#{job.data.matchid}"}
   log = (msg)->
     console.log "[#{data._id}] #{msg}"
