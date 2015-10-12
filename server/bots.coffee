@@ -1,14 +1,11 @@
-Workers = []
-workerCount = process.env.WORKER_COUNT || 4
 util =  Meteor.npmRequire "util"
 fs =    Meteor.npmRequire "fs"
-async = Meteor.npmRequire "async"
 http =  Meteor.npmRequire "http"
-Socks = Meteor.npmRequire "socks"
-Steam = Meteor.npmRequire "steam"
-Dota2 = Meteor.npmRequire "dota2"
 
-fetchingIds = []
+API_URL = process.env.API_URL
+unless API_URL?
+  console.log "API_URL must be set in environment for replay fetching"
+  return
 
 getExpiredTime = ->
   rebornEnabled = new Date("2015-09-09T19:00:00-05:00")
@@ -18,259 +15,131 @@ getExpiredTime = ->
     return rebornEnabled
   lastAcceptable
 
-cleanupBotCooldowns = (bot)->
-  res = _.clone(bot.FetchTimes || [])
-  now = new Date().getTime()
-  for cd in bot.FetchTimes
-    if !cd.time? || cd.time.getTime() <= now
-      res = _.without res, cd
-  bot.FetchTimes = res
+jobQueue = JobCollection("downloadJobQueue")
+jobQueue.processJobs "downloadReplay", {concurrency: 3, payload: 1, prefetch: 1, workTimeout: 30000}, (job, cb)->
+  data = Results.findOne {_id: job.data.matchid}
+  log = (msg)->
+    console.log "[#{data._id}] #{msg}"
+    job.log msg
 
-assignBotToWorker = (worker)->
-  return if worker.bot?
-  bots = Bots.find({$or: [{Invalid: false}, {Invalid: {$exists: false}}]}).fetch()
+  unless data?
+    msg = "unable to find result for match id #{job.data.matchid}!"
+    console.log msg
+    Submissions.update {_id: job.data._id}, {$set: {status: 5}}
+    job.fail msg, {fatal: true}
+    return cb()
 
-  minCount = 9999
-  nbot = null
-  for bot in bots
-    continue if bot.DisableUntil? and bot.DisableUntil.getTime() > (new Date()).getTime()
-    bot.FetchTimes = [] if !bot.FetchTimes?
-    cleanupBotCooldowns bot
-    continue if _.some Workers, (work)->
-      work.bot? and work.bot._id? and work.bot._id is bot._id
-    if bot.FetchTimes.length < 90 && bot.FetchTimes.length < minCount
-      nbot = bot
-      minCount = bot.FetchTimes.length
-  if nbot?
-    console.log "assigning bot #{nbot.Username}, fetch count #{bot.FetchTimes.length} to worker #{worker._id}"
-    worker.bot = nbot
-  else
-    console.log "can't find a bot for #{worker._id}"
-
-assignAndLaunch = (work)->
-  if !work.bot?
-    assignBotToWorker work
-  launchBot work
-
-downloadQueue = async.queue(Meteor.bindEnvironment((match, done)->
-  url = util.format("http://replay%s.valve.net/570/%s_%s.dem.bz2", match.cluster, match._id, match.replaySalt)
-  console.log "[#{match._id}] streaming replay from #{url} to aws"
+  match = data
+  url = util.format("http://replay%s.valve.net/570/%s_%s.dem.bz2", match.cluster, match.match_id, match.replay_salt)
+  log "streaming replay from #{url} to aws"
   http.get(url, Meteor.bindEnvironment (res)->
     headers =
       'Content-Length': res.headers['content-length']
       'Content-Type': res.headers['content-type']
-    filename = "#{match._id}.dem.bz2"
+    filename = "#{match.match_id}.dem.bz2"
     knoxClient.putStream res, filename, headers, Meteor.bindEnvironment (err, ures)->
       if err?
-        console.log "[#{match._id}] error uploading, #{err}"
+        log "[#{match.match_id}] error uploading, #{err}"
+        Submissions.update {_id: job.data._id}, {$set: {status: 5}}
+        job.fail "error uploading, #{err}"
       else
-        console.log "[#{match._id}] upload complete, #{filename}"
-        Submissions.update {matchid: parseInt(match._id)}, {$set: {status: 2}}
-      done()
-  ).on 'error', (err)->
-    console.log "[#{match._id}] error downloading replay, #{err.message}"
-    done()
-), 4)
+        log "[#{match.match_id}] upload complete, #{filename}"
+        mid = parseInt(match.match_id)
+        Submissions.update {_id: job.data._id}, {$set: {status: 2}}
+        job.done mid
+      cb()
+  ).on 'error', Meteor.bindEnvironment (err)->
+    msg = "[#{match.match_id}] error downloading replay, #{err.message}"
+    console.log msg
+    job.fail msg
+    Submissions.update {_id: job.data._id}, {$set: {status: 5}}
+    cb()
 
-launchBot = (work)->
-  launchid = work.launchid = Random.id()
-  if !work.bot?
-    Meteor.setTimeout ->
-      assignAndLaunch work
-    , 10000
-    return
-  #if work.lastProxyUpdate? && work.lastProxyUpdate.getTime()+300000 > (new Date()).getTime()
-  #  console.log "skipping IP refresh as last change happened less than 5 mins ago"
-  #else
-  unless false
-    console.log "requesting new ip for #{work._id}"
-    work.connectAttempts = 0
+jobQueue.processJobs "getMatchDetails", {concurrency: 5, payload: 1, prefetch: 2, workTimeout: 30000}, (job, cb)->
+  data = sub = job.data
+  log = (msg)->
+    console.log "[#{sub.matchid}] #{msg}"
+    job.log msg
+
+  Submissions.update {_id: sub._id}, {$set: {status: 1}}
+  sapikey = process.env.STEAM_API_KEY
+
+  resp = Results.findOne {_id: sub.matchid}
+  if resp?
+    log "result object already fetched!"
+    job.done()
+    return cb()
+
+  if sapikey?
+    log "[#{sub.matchid}] checking replay web API to see if this replay can be skipped"
+    aresp = {}
     try
-      HTTP.post "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
-      work.lastProxyUpdate = new Date()
-    catch err
-      console.log "error requesting new IP: #{err}"
-      Meteor.setTimeout ->
-        launchBot(work)
-      , 5000
-      return
-  continueLaunchBot = ->
-    return if launchid isnt work.launchid
-    bot = work.client = new Bot({accountName: work.bot.Username, password: work.bot.Password}, {nick: work.bot.PersonaName})
-    bot.on "dotaHelloTimeout", Meteor.bindEnvironment ->
-      sta = Dota2.GCConnectionStatus
-      if bot.dota._gcConnectionStatus in [sta.GCConnectionStatus_GC_GOING_DOWN, sta.GCConnectionStatus_NO_SESSION_IN_LOGON_QUEUE, sta.GCConnectionStatus_NO_STEAM]
-        bot.log "ClientHello timeout, but GC status is #{bot.dota._gcConnectionStatus} indicating downtime"
-      else
-        if work? and work.bot?
-          bot.log "dota ClientHello timeout, status #{bot.dota._gcConnectionStatus}, disabling this bot for 1 hour"
-          nxt = new Date()
-          nxt.setMinutes nxt.getMinutes()+60
-          Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
-          work.bot = null
-          assignAndLaunch work
-        bot.stop()
-    bot.on "error", Meteor.bindEnvironment (err)->
-      # TODO: handle log on errors
-      if err.cause is "logonFail"
-        bot.log "login failure, marking this bot as invalid"
-        Bots.update {_id: work.bot._id}, {$set: {Invalid: true, InvalidReason: "Login failure, #{err.eresult}"}}
-      else
-        bot.log "unknown steam error, restarting bot"
-      bot.stop()
-      work.bot = null
-      assignAndLaunch work
-    bot.on "steamReady", Meteor.bindEnvironment ->
-      bot.dota.launch()
-    bot.on "steamUnready", Meteor.bindEnvironment ->
-      bot.log "logged off, restarting the bot"
-      checkProxyDone()
-    bot.on "dotaReady", Meteor.bindEnvironment ->
-      fetchNext = ->
-        unless bot.dota._gcReady
-          bot.log "GC is no longer ready, waiting..."
-          return
-        if launchid isnt work.launchid
-          bot.log "this bot is a duplicate #{work.launchid} != #{launchid}! shutting down"
-          bot.stop()
-          work.bot = null
-          return
-        if work.bot.FetchTimes.length >= 91
-          bot.log "this bot has fetched #{work.bot.FetchTimes.length} matches, rotating it out"
-          bot.stop()
-          work.bot = null
-          assignAndLaunch work
-          return
-        if downloadQueue.length() >= 15
-          bot.log "more than 15 downloads waiting, postponing dota requests"
-          bot.setSessionTimeout ->
-            fetchNext()
-          , 15000
-          return
-        sub = Submissions.findOne {matchid: {$nin: fetchingIds}, $or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}
-        sapikey = process.env.STEAM_API_KEY
-        if !sub?
-          #bot.log "no submissions available, will re-check in 30 seconds"
-          bot.setSessionTimeout ->
-            fetchNext()
-          , 30000
+      aresp = HTTP.call "GET", "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?key=#{sapikey}&match_id=#{sub.matchid}"
+      if aresp.statusCode is 200 and aresp.data? and aresp.data.result? and aresp.data.result.start_time?
+        matchDate = new Date(aresp.data.result.start_time*1000)
+        lastAcceptable = getExpiredTime()
+        if matchDate.getTime() < lastAcceptable.getTime()
+          msg = "#{matchDate} is older than 2 weeks or pre-reborn, skipping replay"
+          log msg
+          Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
+          job.fail msg, {fatal: true}
+          return cb()
         else
-          fetchingIds.push sub.matchid
-          sub.status = 1
-          Submissions.update {_id: sub._id}, {$set: {status: 1}}
-          if sapikey?
-            bot.log "[#{sub.matchid}] checking replay web API to see if this replay can be skipped"
-            aresp = {}
-            try
-              aresp = HTTP.call "GET", "https://api.steampowered.com/IDOTA2Match_570/GetMatchDetails/V001/?key=#{sapikey}&match_id=#{sub.matchid}"
-            catch herr
-              aresp = herr.response
-            if aresp.statusCode is 200 and aresp.data? and aresp.data.result? and aresp.data.result.start_time?
-              matchDate = new Date(aresp.data.result.start_time*1000)
-              lastAcceptable = getExpiredTime()
-              if matchDate.getTime() < lastAcceptable.getTime()
-                bot.log "[#{sub.matchid}] #{matchDate} is older than 2 weeks or pre-reborn, skipping replay"
-                Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
-                bot.setSessionTimeout ->
-                  fetchNext()
-                , 1200
-                return
-              else
-                bot.log "[#{sub.matchid}] is not more than 1.5 weeks old, continuing"
-            else
-              bot.log "[#{sub.matchid}] response from web api #{aresp.statusCode}, continuing with checks..."
-          bot.log "[#{sub.matchid}] requesting match data from DOTA"
-          work.bot.FetchTimes = [] if !work.bot.FetchTimes?
-          work.bot.FetchTimes.push (new Date()).getTime()
-          Bots.update {_id: work.bot._id}, {$set: {FetchTimes: work.bot.FetchTimes}}
-          eres = Results.findOne {_id: "#{sub.matchid}"}
-          if eres?
-            bot.log "[#{sub.matchid}] already fetched, grabbing it again"
-          hasTimedOut = false
-          timeout = Meteor.setTimeout ->
-            hasTimedOut = true
-            unless bot.dota._gcReady
-              bot.log "[#{sub.matchid}] request timed out, but GC is not ready."
-              fetchingIds = _.without fetchingIds sub.matchid
-              Submissions.update {_id: sub._id}, {$set: {status: 0}}
-              return
-            bot.log "[#{sub.matchid}] request timed out, disabling bot for 5 hours"
-            nxt = new Date()
-            nxt.setMinutes nxt.getMinutes()+300
-            Bots.update {_id: work.bot._id}, {$set: {DisableUntil: nxt}}
-            bot.stop()
-            work.bot = null
-            assignAndLaunch work
-          , 15000
-          bot.dota.matchDetailsRequest sub.matchid, Meteor.bindEnvironment (err, resp)->
-            return if hasTimedOut
-            Meteor.clearTimeout timeout
-            if err? || !resp?
-              bot.log "error fetching #{sub.matchid}, #{JSON.stringify err}" if err?
-              bot.log "no response for #{sub.matchid}!" if !resp?
-              err = err || 0
-              Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: parseInt(err)}}
-            else
-              resp = resp.match
-              resp._id = "#{sub.matchid}"
-              Results.upsert {_id: resp._id}, resp
-              bot.log "[#{sub.matchid}] received match data"
-              if resp.replayState isnt "REPLAY_AVAILABLE"
-                bot.log "[#{sub.matchid}] replay not available, #{resp.replayState}"
-                Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -1, fetch_error_replay_state: resp.replayState}}
-              else
-                downloadQueue.push resp
-            bot.setSessionTimeout ->
-              fetchNext()
-            , 3000
-      fetchNext()
-
-    server = Steam.randomServer()
-    work.connectAttempts++
-    Socks.createConnection {proxy: {ipaddress: process.env.HMA_HOST, port: work.proxy.port, type: 5}, target: {host: server.host, port: server.port}}, Meteor.bindEnvironment (err, socket)->
-      if err?
-        console.log "error connecting, #{err}, attempt #{work.connectAttempts}/6"
-        return if launchid isnt work.launchid
-        if work.connectAttempts >= 6
-          console.log "#{work.connectAttempts} attempts to connect, this proxy must be bad. re-trying"
-          work.lastProxyUpdate = null
-          work.bot = null
-          work.connectAttempts = 0
-          assignAndLaunch work
-          return
-        checkProxyDone()
+          log "is not more than 1.5 weeks old, continuing"
       else
-        if launchid isnt work.launchid
-          socket.destroy() if socket? and socket.destroy?
-          return
-        work.connectAttempts = 0
-        bot.startWithSocket socket
+        log "response from web api #{aresp.statusCode}, continuing with checks..."
+    catch herr
+      aresp = herr.response
+      log "Unable to check DOTA 2 api, #{herr}"
 
-  checkProxyDone = ->
-    Meteor.setTimeout ->
-      res = {}
-      try
-        res = HTTP.get "http://#{work.proxy.api}/#{process.env.HMA_SECRET}", {}
-      catch err
-        res = err.response
-      if res.statusCode is 200 and res.data.connected
-        continueLaunchBot()
-      else
-        console.log "still waiting for proxy #{work.proxy.api} to be ready"
-        console.log res
-        checkProxyDone()
-    , 5000
-  checkProxyDone()
+  # put http calls here
+  # set match.match_id to the match id
+  try
+    resp = HTTP.call "GET", API_URL, {params: {match_id: sub.matchid}}
+    data = resp.data
+    if data.result is 1 and data.match?
+      match = data.match
+      match._id = match.match_id = sub.matchid
+      Results.remove {_id: sub.matchid}
+      Results.insert match
+      log "finished fetching match details"
+      job.done()
+    else if data.match? and data.vote?
+      msg = "result was #{data.result}, failing this replay"
+      Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: data.result}}
+      log msg
+      job.fail JSON.stringify(data), {fatal: true}
+    else
+      msg = "result was #{JSON.stringify data}, failing non-fatally"
+      log msg
+      job.fail msg
+  catch e
+    msg = "Unable to query the API for match details, #{e}"
+    log msg
+    job.fail msg
 
-Workers = []
+  return cb()
+
 Meteor.startup ->
   lastAcceptable = getExpiredTime()
-  Submissions.update {status: 1}, {$set: {status: 0}}, {multi: true}
+  Submissions.find({$or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}).observe
+    added: (doc)->
+      return if jobQueue.findOne({"data._id": doc._id})?
+      job = new Job(jobQueue, "getMatchDetails", doc)
+      job.priority('normal')
+        .retry
+          retries: 3
+          wait: 5*60*1000
+        .save()
+
+      down = new Job(jobQueue, "downloadReplay", doc)
+      down.priority("normal")
+        .retry
+          retries: 3
+          wait: 5*60*1000
+        .depends [job]
+        .save()
+
   Submissions.update {status: 0, createdAt: {$lt: lastAcceptable}}, {$set: {status: 5, fetch_error: -5}}, {multi: true}, (err, aff)->
     console.log "cleared #{aff} known expired replays"
-
-  Workers = BotWorkers.find().fetch()
-  console.log "starting #{Workers.length} bot workers"
-
-  for work in Workers
-    assignAndLaunch work
+  jobQueue.startJobServer()

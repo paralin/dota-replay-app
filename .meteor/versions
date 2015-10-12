@@ -53,6 +53,7 @@ mizzao:user-status@0.6.5
 mobile-status-bar@1.0.3
 momentjs:moment@2.10.3
 mongo@1.1.0
+mrt:later@1.6.1
 mycartio:newrelic@1.0.5
 natestrauser:connection-banner@0.4.3
 npm-container@1.0.0
@@ -83,6 +84,7 @@ ui@1.0.6
 underscore@1.0.3
 underscorestring:underscore.string@3.0.3_1
 url@1.0.4
+vsivsi:job-collection@1.2.3
 webapp@1.2.0
 webapp-hashing@1.0.3
 zimme:iron-router-active@1.0.4
