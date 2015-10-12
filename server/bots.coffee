@@ -17,7 +17,7 @@ getExpiredTime = ->
 
 jobQueue = JobCollection("downloadJobQueue")
 jobQueue.processJobs "downloadReplay", {concurrency: 3, payload: 1, prefetch: 1, workTimeout: 30000}, (job, cb)->
-  data = Results.findOne {_id: job.data.matchid}
+  data = Results.findOne {_id: "#{job.data.matchid}"}
   log = (msg)->
     console.log "[#{data._id}] #{msg}"
     job.log msg
@@ -55,7 +55,7 @@ jobQueue.processJobs "downloadReplay", {concurrency: 3, payload: 1, prefetch: 1,
     Submissions.update {_id: job.data._id}, {$set: {status: 5}}
     cb()
 
-jobQueue.processJobs "getMatchDetails", {concurrency: 5, payload: 1, prefetch: 2, workTimeout: 30000}, (job, cb)->
+jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2, workTimeout: 30000}, (job, cb)->
   data = sub = job.data
   log = (msg)->
     console.log "[#{sub.matchid}] #{msg}"
@@ -64,7 +64,7 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 5, payload: 1, prefetch: 2
   Submissions.update {_id: sub._id}, {$set: {status: 1}}
   sapikey = process.env.STEAM_API_KEY
 
-  resp = Results.findOne {_id: sub.matchid}
+  resp = Results.findOne {_id: "#{sub.matchid}"}
   if resp?
     log "result object already fetched!"
     job.done()
@@ -99,8 +99,9 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 5, payload: 1, prefetch: 2
     data = resp.data
     if data.result is 1 and data.match?
       match = data.match
-      match._id = match.match_id = sub.matchid
-      Results.remove {_id: sub.matchid}
+      match.match_id = sub.matchid
+      match._id = "#{match.match_id}"
+      Results.remove {_id: match._id}
       Results.insert match
       log "finished fetching match details"
       job.done()
