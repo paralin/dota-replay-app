@@ -98,7 +98,7 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
   # put http calls here
   # set match.match_id to the match id
   try
-    resp = HTTP.call "GET", API_URL, {params: {match_id: sub.matchid}}
+    resp = HTTP.call "GET", API_URL, {params: {match_id: sub.matchid, key: process.env.API_SECRET}}
     data = resp.data
     if data.result is 1 and data.match?
       match = data.match
