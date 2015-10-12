@@ -8,9 +8,12 @@ unless API_URL?
   return
 
 getExpiredTime = ->
-  rebornEnabled = new Date("2015-09-09T19:00:00-05:00")
+  # This is when reborn actually was enabled
+  #rebornEnabled = new Date("2015-09-09T19:00:00-05:00")
+  # This is after the "new bot system" was done
+  rebornEnabled = new Date("2015-10-08T00:00:00+00:00")
   lastAcceptable = new Date()
-  lastAcceptable.setMinutes lastAcceptable.getMinutes()-15120
+  lastAcceptable.setMinutes lastAcceptable.getMinutes()-20160
   if lastAcceptable.getTime() < rebornEnabled.getTime()
     return rebornEnabled
   lastAcceptable
