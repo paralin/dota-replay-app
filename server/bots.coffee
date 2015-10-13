@@ -46,7 +46,7 @@ jobQueue.processJobs "downloadReplay", {concurrency: 5, payload: 1, prefetch: 1,
         Submissions.update {_id: job.data._id}, {$set: {status: 5}}
         job.fail "error uploading, #{err}"
       else
-        log "[#{match.match_id}] upload complete, #{filename}"
+        log "upload complete, #{filename}"
         mid = parseInt(match.match_id)
         Submissions.update {_id: job.data._id}, {$set: {status: 2}}
         job.done mid
