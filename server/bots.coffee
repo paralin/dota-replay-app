@@ -118,6 +118,19 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
       log msg
       job.fail msg
   catch e
+    aresp = e.response
+    if aresp.statusCode is 500 and aresp.content.substr(0, 1) is "{"
+      try
+        data = JSON.parse aresp.content
+        if data.error?
+          log "DOTA 2 error checking replay: #{data.error}"
+          if data.error is 15
+            log "Replay is unavailable."
+            Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: 15}}
+            job.fail "Replay is unavailable, code 15.", {fatal: true}
+            return cb()
+      catch ex
+
     msg = "Unable to query the API for match details, #{e}"
     log msg
     job.fail msg
