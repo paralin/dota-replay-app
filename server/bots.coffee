@@ -128,7 +128,16 @@ Meteor.startup ->
   lastAcceptable = getExpiredTime()
   Submissions.find({$or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}).observe
     added: (doc)->
-      return if jobQueue.findOne({"data._id": doc._id})?
+      ejob = jobQueue.findOne({"data._id": doc._id})
+      if ejob?
+        if ejob.status in jobQueue.jobStatusRestartable
+          console.log "restarting job #{doc._id}"
+          job = new Job(jobQueue, ejob)
+          job.restart
+            antecedents: true
+            dependents: true
+            retries: 3
+        return
       job = new Job(jobQueue, "getMatchDetails", doc)
       job.priority('normal')
         .retry
