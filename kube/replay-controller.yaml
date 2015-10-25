@@ -23,5 +23,14 @@ spec:
       containers:
       - name: replay
         image: r.prompt.life:5000/prompt/replay:vN
+        command: [ "bash", "-c", "source /etc/kube-replay/config && main.js" ]
+        volumeMounts:
+          - name: replay-config
+            mountPath: /etc/kube-replay
+            readOnly: true
         ports:
         - containerPort: 8080
+      volumes:
+        - name: replay-config
+          secret:
+            secretName: replay-config
