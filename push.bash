@@ -9,7 +9,7 @@ fi
 rm -rf $TMP_PATH
 mkdir $TMP_PATH
 sed -e "s/vN/v${VERSION}/g" kube/replay-controller.yaml > $TMP_PATH/replay-controller.yaml
-cp kube/api-service.yaml $TMP_PATH
+# cp kube/replay-service.yaml $TMP_PATH
 RC_LIST=$(kubectl get rc -l "app=replay")
 NUM_EXIST=$(echo "$RC_LIST" | wc -l)
 if [ "$NUM_EXIST" -gt "1" ]; then
