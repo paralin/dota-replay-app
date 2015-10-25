@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: replay-vN
+  labels:
+    name: replay
+    app: replay
+    version: vN
+    tier: api
+  replicas: 1
+spec:
+  selector:
+    app: replay
+    version: vN
+  template:
+    metadata:
+      labels:
+        name: replay
+        app: replay
+        tier: api
+        version: vN
+    spec:
+      containers:
+      - name: replay
+        image: r.prompt.life:5000/prompt/replay:vN
+        ports:
+        - containerPort: 8080
