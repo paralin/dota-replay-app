@@ -44,7 +44,7 @@ iron:middleware-stack@1.0.11
 iron:router@1.0.12
 iron:url@1.0.11
 jquery@1.11.4
-kidovate:accounts-steam@1.0.0
+kidovate:accounts-steam@1.0.1
 kidovate:bower@0.1.17
 kidovate:steam@1.0.1
 launch-screen@1.0.4
