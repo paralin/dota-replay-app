@@ -3,7 +3,6 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-platform
 coffeescript
 iron:router
 less
@@ -19,7 +18,6 @@ kidovate:bower
 reywood:publish-composite
 mizzao:user-status
 chuangbo:marked
-npm-container
 natestrauser:connection-banner
 orbit:permissions
 percolate:synced-cron
@@ -30,3 +28,16 @@ http
 random
 mycartio:newrelic
 vsivsi:job-collection
+standard-minifiers
+meteor-base
+mobile-experience
+mongo
+blaze-html-templates
+session
+jquery
+tracker
+logging
+reload
+ejson
+spacebars
+check
