@@ -45,7 +45,6 @@ iron:router@1.0.12
 iron:url@1.0.11
 jquery@1.11.4
 kidovate:accounts-steam@1.0.1
-kidovate:bower@0.1.17
 kidovate:steam@1.0.1
 launch-screen@1.0.4
 less@2.5.0_3
@@ -67,9 +66,11 @@ mobile-status-bar@1.0.6
 momentjs:moment@2.10.6
 mongo@1.1.2
 mongo-id@1.0.1
+mquandalle:bower@1.5.2_1
 mrt:later@1.6.1
 mycartio:newrelic@1.0.5
 natestrauser:connection-banner@0.4.3
+npm-container@1.2.0
 npm-mongo@1.4.39_1
 oauth@1.1.6
 oauth2@1.1.5

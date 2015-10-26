@@ -14,7 +14,6 @@ service-configuration
 aldeed:collection2
 zimme:iron-router-active
 rgoomar:bootstrap-validator
-kidovate:bower
 reywood:publish-composite
 mizzao:user-status
 chuangbo:marked
@@ -44,3 +43,4 @@ meteorhacks:npm
 
 
 npm-container
+mquandalle:bower
