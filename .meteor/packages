@@ -3,11 +3,12 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
+meteor-base
 coffeescript
 iron:router
 less
 percolate:velocityjs
-mizzao:bootstrap-3
+twbs:bootstrap
 tap:i18n
 kidovate:accounts-steam
 service-configuration
@@ -27,8 +28,6 @@ random
 mycartio:newrelic
 vsivsi:job-collection
 standard-minifiers
-meteor-base
-mobile-experience
 mongo
 blaze-html-templates
 session
@@ -39,8 +38,8 @@ reload
 ejson
 spacebars
 check
+mquandalle:bower
 meteorhacks:npm
 
 
 npm-container
-mquandalle:bower
