@@ -57,34 +57,6 @@ Template.PanelLayout.rendered = ->
     selector: "[data-toggle=popover]"
     container: "body"
 
-  
-  # End Tootltip Function
-  
-  # Start Nicescroll and Slimscroll Function
-  $(".sidebar-nicescroller").niceScroll
-    cursorcolor: "#121212"
-    cursorborder: "0px solid #fff"
-    cursorborderradius: "0px"
-    cursorwidth: "0px"
-
-  $(".sidebar-nicescroller").getNiceScroll().resize()
-  $(".right-sidebar-nicescroller").niceScroll
-    cursorcolor: "#111"
-    cursorborder: "0px solid #fff"
-    cursorborderradius: "0px"
-    cursorwidth: "0px"
-
-  $(".right-sidebar-nicescroller").getNiceScroll().resize()
-  $ ->
-    "use strict"
-    $(".scroll-nav-dropdown").slimScroll
-      height: "200px"
-      position: "right"
-      size: "4px"
-      railOpacity: 0.3
-
-    return
-
   $ ->
     "use strict"
     $(".scroll-chat-widget").slimScroll
