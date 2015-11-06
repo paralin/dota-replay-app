@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: replay
-        image: r.prompt.life:5000/prompt/replay:vN
+        image: r.prompt.life:30000/prompt/replay:vN
         command: [ "bash", "-c", "source /etc/kube-replay/config && node main.js" ]
         volumeMounts:
           - name: replay-config

@@ -3,8 +3,8 @@ echo ${VERSION}
 export TMP_PATH=/tmp/push-replay-v${VERSION}
 if [ -z "$NO_REBUILD" ]; then
   sudo docker build --tag="prompt/replay:v${VERSION}" .
-  sudo docker tag -f prompt/replay:v${VERSION} r.prompt.life:5000/prompt/replay:v${VERSION}
-  sudo docker push r.prompt.life:5000/prompt/replay:v${VERSION}
+  sudo docker tag -f prompt/replay:v${VERSION} r.prompt.life:30000/prompt/replay:v${VERSION}
+  sudo docker push r.prompt.life:30000/prompt/replay:v${VERSION}
 fi
 rm -rf $TMP_PATH
 mkdir $TMP_PATH
