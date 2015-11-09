@@ -1,17 +1,17 @@
 gcloudconfig =
-  projectId: 'paralin-2'
-  keyFilename: process.cwd()+'/assets/google-key.json'
+  projectId: process.env.GCE_PROJECT_ID || 'paralin-2'
+  keyFilename: process.env.GCE_KEY_PATH || process.cwd()+'/assets/google-key.json'
 config =
   bucket: process.env.GCE_BUCKET || "dota-replay"
 
-if process.env.GCE_PROJECT_ID? and process.env.GCE_KEY_PATH?
+if process.env.GCE_PROJECT_ID? or process.env.GCE_KEY_PATH?
   console.log "Using environment variables for gce access..."
 else
   if process.env.NODE_ENV is "production"
     console.log "No env variables for gce access in production, exiting!"
     process.exit 1
 
-  console.log "No env variables for S3 access, assuming development..."
+  console.log "No env variables for gcloud access, assuming development..."
 
 gcloud = Meteor.npmRequire "gcloud"
 async = Meteor.npmRequire "async"
