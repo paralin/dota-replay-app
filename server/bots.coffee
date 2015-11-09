@@ -1,6 +1,6 @@
 util =  Meteor.npmRequire "util"
 fs =    Meteor.npmRequire "fs"
-http =  Meteor.npmRequire "http"
+request =  Meteor.npmRequire "request"
 
 API_URL = process.env.API_URL
 unless API_URL?
@@ -34,29 +34,16 @@ jobQueue.processJobs "downloadReplay", {concurrency: 5, payload: 1, prefetch: 1,
 
   match = data
   url = util.format("http://replay%s.valve.net/570/%s_%s.dem.bz2", match.cluster, match.match_id, match.replay_salt)
-  log "streaming replay from #{url} to aws"
-  http.get(url, Meteor.bindEnvironment (res)->
-    headers =
-      'Content-Length': res.headers['content-length']
-      'Content-Type': res.headers['content-type']
-    filename = "#{match.match_id}.dem.bz2"
-    knoxClient.putStream res, filename, headers, Meteor.bindEnvironment (err, ures)->
-      if err?
-        log "[#{match.match_id}] error uploading, #{err}"
-        Submissions.update {_id: job.data._id}, {$set: {status: 5}}
-        job.fail "error uploading, #{err}"
-      else
-        log "upload complete, #{filename}"
-        mid = parseInt(match.match_id)
-        Submissions.update {_id: job.data._id}, {$set: {status: 2}}
-        job.done mid
-      cb()
-  ).on 'error', Meteor.bindEnvironment (err)->
-    msg = "[#{match.match_id}] error downloading replay, #{err.message}"
-    console.log msg
-    job.fail msg
+  log "streaming replay from #{url} to bucket"
+  request.get(url).on('error', Meteor.bindEnvironment (err)->
+    log "[#{match.match_id}] error uploading, #{err}"
     Submissions.update {_id: job.data._id}, {$set: {status: 5}}
-    cb()
+    job.fail "error uploading, #{err}"
+  ).pipe(bucket.file("#{match.match_id}.dem.bz2").createWriteStream()).on 'finish', Meteor.bindEnvironment ->
+    log "upload complete, #{match.match_id}"
+    mid = parseInt(match.match_id)
+    Submissions.update {_id: job.data._id}, {$set: {status: 2}}
+    job.done mid
 
 jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2, workTimeout: 30000}, (job, cb)->
   data = sub = job.data

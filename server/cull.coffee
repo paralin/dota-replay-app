@@ -16,18 +16,13 @@ Meteor.startup ->
     filesToDelete = []
     for cull in toCull
       toCullIds.push cull._id
-      filesToDelete.push "#{cull.matchid}.dem.bz2"
+      filesToDelete.push bucket.file("#{cull.matchid}.dem.bz2")
     if process.env.ENABLE_CULL_OLD? and filesToDelete.length > 0
-      console.log "about to cull #{filesToDelete.length} files"
+      console.log "culling #{filesToDelete.length} files"
       Submissions.update {_id: {$in: toCullIds}}, {$set: {status: 6}}, {multi: true}
-      for files in filesToDelete.chunk(100)
-        knoxClient.deleteMultiple files, (err, res)->
-          if err?
-            console.log "cannot delete culled submission files, #{err}"
-          else
-            console.log "=== PURGED #{files.length} FILES FROM AWS ==="
+      deleteQueue.push filesToDelete
     else
-      console.log "not actually culling since ENABLE_CULL_OLD is not enabled"
+      console.log "not actually culling #{filesToDelete.length} since ENABLE_CULL_OLD is not enabled"
   Meteor.setInterval ->
     cullOld()
   , 3600000
