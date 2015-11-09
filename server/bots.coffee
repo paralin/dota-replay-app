@@ -39,11 +39,13 @@ jobQueue.processJobs "downloadReplay", {concurrency: 5, payload: 1, prefetch: 1,
     log "[#{match.match_id}] error uploading, #{err}"
     Submissions.update {_id: job.data._id}, {$set: {status: 5}}
     job.fail "error uploading, #{err}"
+    cb()
   ).pipe(bucket.file("#{match.match_id}.dem.bz2").createWriteStream()).on 'finish', Meteor.bindEnvironment ->
     log "upload complete, #{match.match_id}"
     mid = parseInt(match.match_id)
     Submissions.update {_id: job.data._id}, {$set: {status: 2}}
     job.done mid
+    cb()
 
 jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2, workTimeout: 30000}, (job, cb)->
   data = sub = job.data
