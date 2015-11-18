@@ -23,6 +23,7 @@ submission =
   uname: ""
   matchtime: 0
   hero_to_watch: ""
+  ingame_time: "optional"
 
 Router.route('/api/shows/:id', { where: 'server' })
   .get ->
@@ -43,8 +44,10 @@ Router.route('/api/submissions/create', { where: 'server' })
     sub = _.pick @request.body, _.keys submission
     for k, v of submission
       if !sub[k]?
-        throwErr @response, 403, "You are missing #{k} on your submission."
-        return
+        if submission[k] isnt "optional"
+          throwErr @response, 403, "You are missing #{k} on your submission."
+          return
+        continue
       typ = typeof v
       if typeof(sub[k]) isnt typ
         throwErr @response, 403, "The submission property #{k} should be a #{typ}."

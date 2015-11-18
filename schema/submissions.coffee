@@ -98,5 +98,8 @@ SubmissionSchema = new SimpleSchema
   fetch_error_replay_state:
     type: String
     optional: true
+  ingame_time:
+    type: String
+    optional: true
 
 Submissions.attachSchema SubmissionSchema
