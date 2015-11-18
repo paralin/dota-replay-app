@@ -33,7 +33,7 @@ jobQueue.processJobs "downloadReplay", {concurrency: 5, payload: 1, prefetch: 1,
     return cb()
 
   match = data
-  file = bucket.file("#{match.match_id}.dem.bz2").
+  file = bucket.file("#{match.match_id}.dem.bz2")
   ws = file.createWriteStream()
   url = util.format("http://replay%s.valve.net/570/%s_%s.dem.bz2", match.cluster, match.match_id, match.replay_salt)
   log "streaming replay from #{url} to bucket"
