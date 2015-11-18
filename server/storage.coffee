@@ -36,9 +36,10 @@ console.log "Using GCE bucket: #{config.bucket}"
       done(err, resp)
   ).result
 
-Meteor.startup ->
-  return unless process.env.ENABLE_CULL_UNKNOWN?
-
+#Meteor.startup ->
+#  return unless process.env.ENABLE_CULL_UNKNOWN?
+#
+  ### todo: update this code for GCE
   console.log "checking entire s3 bucket..."
   allKeys = Async.runSync((done) ->
     bucket.getFiles (err, files) ->
@@ -69,3 +70,4 @@ Meteor.startup ->
 
   totalRem = toRemove.length
   deleteQueue.push toRemove
+  ###
