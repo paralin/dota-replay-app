@@ -33,6 +33,8 @@ jobQueue.processJobs "downloadReplay", {concurrency: 5, payload: 1, prefetch: 1,
     return cb()
 
   match = data
+  file = bucket.file("#{match.match_id}.dem.bz2").
+  ws = file.createWriteStream()
   url = util.format("http://replay%s.valve.net/570/%s_%s.dem.bz2", match.cluster, match.match_id, match.replay_salt)
   log "streaming replay from #{url} to bucket"
   request.get(url).on('error', Meteor.bindEnvironment (err)->
@@ -40,7 +42,7 @@ jobQueue.processJobs "downloadReplay", {concurrency: 5, payload: 1, prefetch: 1,
     Submissions.update {_id: job.data._id}, {$set: {status: 5}}
     job.fail "error uploading, #{err}"
     cb()
-  ).pipe(bucket.file("#{match.match_id}.dem.bz2").createWriteStream()).on 'finish', Meteor.bindEnvironment ->
+  ).pipe(ws).on 'finish', Meteor.bindEnvironment ->
     log "upload complete, #{match.match_id}"
     mid = parseInt(match.match_id)
     Submissions.update {_id: job.data._id}, {$set: {status: 2}}
