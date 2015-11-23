@@ -2,6 +2,12 @@ WebSocket = Meteor.npmRequire("ws").Server
 jwt = Meteor.npmRequire("jsonwebtoken")
 
 secret = "TDQFAL7KEDCTo0"
+shownameCache = {}
+
+resolveShowname = (show) ->
+  return shownameCache[show] if shownameCache[show]
+  shownameCache[show] = Shows.findOne({_id: show}).name
+  return shownameCache[show]
 
 ws = new WebSocket({port: 10304})
 
@@ -34,12 +40,12 @@ class Client
     return false if !OrbitPermissions.userCan("review-submissions", "dr", @uid)
     @watchhand = Submissions.find({reviewed: false, reviewer: @uid}).observe
       added: (doc)=>
-        doc.showname = Shows.findOne({_id: doc.show}).name
+        doc.showname = resolveShowname doc.show
         @sendMsg
           m: 2
           replay: doc
       changed: (doc)=>
-        doc.showname = Shows.findOne({_id: doc.show}).name
+        doc.showname = resolveShowname doc.show
         @sendMsg
           m: 2
           replay: doc
@@ -62,7 +68,7 @@ class Client
     if jmsg.m is 0
       return if !jmsg.token?
       console.log "Checking handshake..."
-      if jmsg.version isnt "1.9.3"
+      if jmsg.version isnt "1.9.4"
         console.log "Client is out of date #{jmsg.version}..."
         @sendMsg {m: 9999}
         return
