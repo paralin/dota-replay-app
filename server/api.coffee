@@ -143,15 +143,21 @@ Router.route('/download_match/:matchid', { where: 'server' })
 
 Router.route('/api/submissions/dumpcsv', { where: 'server' })
   .get ->
-    subs = Submissions.find({status: 4, legacyUsed: null}, {sort: {rating: -1}}).fetch()
+    usernameCache = {}
+    subs = Submissions.find({reviewed: true, legacyUsed: null}, {sort: {rating: -1}}).fetch()
 
     @response.writeHead 200,
       "Content-Disposition": "attachment;filename=submissions.csv"
 
     for sub in subs
-      user = Meteor.users.findOne {_id: sub.reviewer}
-      if user?
-        sub.reviewerName = user.profile.name
+      name = usernameCache[sub.reviewer]
+      if !name?
+        user = Meteor.users.findOne {_id: sub.reviewer}
+        if user?
+          sub.reviewerName = user.profile.name
+        else
+          sub.reviewerName = "Unknown"
+        usernameCache[sub.reviewer] = sub.reviewerName
 
     res = json2csv {data: subs, fields: ["rating", "show", "matchid", "hero_to_watch", "uname", "reviewerDescription", "description", "reviewerName", "matchtime"]}, (err, csv)=>
       if err?
