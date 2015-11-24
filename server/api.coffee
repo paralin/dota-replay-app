@@ -159,7 +159,7 @@ Router.route('/api/submissions/dumpcsv', { where: 'server' })
           sub.reviewerName = "Unknown"
         usernameCache[sub.reviewer] = sub.reviewerName
 
-    res = json2csv {data: subs, fields: ["rating", "show", "matchid", "hero_to_watch", "uname", "reviewerDescription", "description", "reviewerName", "matchtime"]}, (err, csv)=>
+    res = json2csv {data: subs, fields: ["rating", "show", "matchid", "hero_to_watch", "uname", "reviewerDescription", "description", "reviewerName", "matchtime", "ingame_time"]}, (err, csv)=>
       if err?
         console.log "Error generating sheet #{err}"
       else
