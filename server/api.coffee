@@ -144,7 +144,7 @@ Router.route('/download_match/:matchid', { where: 'server' })
 Router.route('/api/submissions/dumpcsv', { where: 'server' })
   .get ->
     usernameCache = {}
-    subs = Submissions.find({reviewed: true, legacyUsed: null}, {sort: {rating: -1}}).fetch()
+    subs = Submissions.find({status: 4, reviewed: true, legacyUsed: null}, {sort: {rating: -1}}).fetch()
 
     @response.writeHead 200,
       "Content-Disposition": "attachment;filename=submissions.csv"
@@ -168,7 +168,7 @@ Router.route('/api/submissions/dumpcsv', { where: 'server' })
 
 Router.route('/api/submissions/markold', { where: 'server' })
   .get ->
-    subs = Submissions.update({status: 4}, {$set: {legacyUsed: true}}, {multi: true})
+    subs = Submissions.update({reviewed: true}, {$set: {legacyUsed: true}}, {multi: true})
 
     @response.writeHead 200
     @response.end "Done"
