@@ -114,7 +114,7 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
       try
         data = JSON.parse aresp.content
         if data.error?
-          log "DOTA 2 error checking replay: #{data.error}"
+          log "DOTA 2 error checking replay: #{JSON.stringify data.error}"
           if data.error is 15
             log "Replay is unavailable."
             Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: 15}}
