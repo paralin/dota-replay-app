@@ -59,6 +59,7 @@ Template.PanelLayout.rendered = ->
 
   $ ->
     "use strict"
+    ###
     $(".scroll-chat-widget").slimScroll
       height: "200px"
       position: "right"
@@ -67,6 +68,7 @@ Template.PanelLayout.rendered = ->
       railVisible: true
       alwaysVisible: true
       start: "bottom"
+    ###
 
     return
 

@@ -7,7 +7,6 @@
   ],
   "description": "DOTA 2 replay submission system",
   "dependencies": {
-    "slimScroll": "~1.3.6",
     "jquery-backstretch": "~2.0.4",
     "font-awesome": "~4.2.0",
     "jasny-bootstrap": "~3.1.3",
