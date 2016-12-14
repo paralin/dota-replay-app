@@ -8,14 +8,12 @@ unless API_URL?
   return
 
 getExpiredTime = ->
-  # This is when reborn actually was enabled
-  #rebornEnabled = new Date("2015-09-09T19:00:00-05:00")
-  # This is after the "new bot system" was done
-  rebornEnabled = new Date("2015-10-08T00:00:00+00:00")
+  # This is when patch 7.0 came out.
+  latestCompat = new Date("2016-12-14T23:53:56+00:00")
   lastAcceptable = new Date()
   lastAcceptable.setMinutes lastAcceptable.getMinutes()-20160
-  if lastAcceptable.getTime() < rebornEnabled.getTime()
-    return rebornEnabled
+  if lastAcceptable.getTime() < latestCompat.getTime()
+    return latestCompat
   lastAcceptable
 
 jobQueue = JobCollection("downloadJobQueue")
@@ -73,7 +71,7 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
         matchDate = new Date(aresp.data.result.start_time*1000)
         lastAcceptable = getExpiredTime()
         if matchDate.getTime() < lastAcceptable.getTime()
-          msg = "#{matchDate} is older than 2 weeks or pre-reborn, skipping replay"
+          msg = "#{matchDate} is older than 2 weeks or pre-compat patch, skipping replay"
           log msg
           Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
           job.fail msg, {fatal: true}
