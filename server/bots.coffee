@@ -58,7 +58,16 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
 
   resp = Results.findOne {_id: "#{sub.matchid}"}
   if resp?
-    log "result object already fetched!"
+    if resp.startTime?
+      matchDate = new Date(resp.startTime*1000)
+      lastAcceptable = getExpiredTime()
+      if matchDate.getTime() < lastAcceptable.getTime()
+        msg = "#{matchDate} is older than 2 weeks or pre-compat patch, skipping replay"
+        log msg
+        Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5}}
+        job.fail msg, {fatal: true}
+        return cb()
+    log "result #{sub.matchid} already fetched!"
     job.done()
     return cb()
 
