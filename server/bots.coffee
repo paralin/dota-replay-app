@@ -127,34 +127,36 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
   return cb()
 
 Meteor.startup ->
-  lastAcceptable = getExpiredTime()
-  Submissions.find({$or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}], status: 0}, {sort: {createdAt: -1}}).observe
-    added: (doc)->
-      ejob = jobQueue.findOne({"data._id": doc._id})
-      if ejob?
-        if ejob.status in jobQueue.jobStatusRestartable
-          console.log "restarting job #{doc._id}"
-          job = new Job(jobQueue, ejob)
-          job.restart
-            antecedents: true
-            dependents: true
+  Meteor.setTimeout ->
+    lastAcceptable = getExpiredTime()
+    Submissions.find({$or: [{legacyUsed: false}, {legacyUsed: {$exists: false}}, {legacyUsed: null}], status: 0}, {sort: {createdAt: -1}}).observe
+      added: (doc)->
+        ejob = jobQueue.findOne({"data._id": doc._id})
+        if ejob?
+          if ejob.status in jobQueue.jobStatusRestartable
+            console.log "restarting job #{doc._id}"
+            job = new Job(jobQueue, ejob)
+            job.restart
+              antecedents: true
+              dependents: true
+              retries: 3
+          return
+        job = new Job(jobQueue, "getMatchDetails", doc)
+        job.priority('normal')
+          .retry
             retries: 3
-        return
-      job = new Job(jobQueue, "getMatchDetails", doc)
-      job.priority('normal')
-        .retry
-          retries: 3
-          wait: 5*60*1000
-        .save()
+            wait: 5*60*1000
+          .save()
 
-      down = new Job(jobQueue, "downloadReplay", doc)
-      down.priority("normal")
-        .retry
-          retries: 3
-          wait: 5*60*1000
-        .depends [job]
-        .save()
+        down = new Job(jobQueue, "downloadReplay", doc)
+        down.priority("normal")
+          .retry
+            retries: 3
+            wait: 5*60*1000
+          .depends [job]
+          .save()
 
-  Submissions.update {status: 0, createdAt: {$lt: lastAcceptable}}, {$set: {status: 5, fetch_error: -5}}, {multi: true}, (err, aff)->
-    console.log "cleared #{aff} known expired replays"
+    Submissions.update {status: 0, createdAt: {$lt: lastAcceptable}}, {$set: {status: 5, fetch_error: -5}}, {multi: true}, (err, aff)->
+      console.log "cleared #{aff} known expired replays"
+  , 1000
   jobQueue.startJobServer()

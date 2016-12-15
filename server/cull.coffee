@@ -26,4 +26,6 @@ Meteor.startup ->
   Meteor.setInterval ->
     cullOld()
   , 3600000
-  cullOld()
+  Meteor.setTimeout ->
+    cullOld()
+  , 1000
