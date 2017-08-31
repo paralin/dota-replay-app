@@ -25,7 +25,6 @@ momentjs:moment
 meteorhacks:async
 http
 random
-mycartio:newrelic
 vsivsi:job-collection
 standard-minifiers
 mongo
@@ -38,7 +37,6 @@ reload
 ejson
 spacebars
 check
-mquandalle:bower
 meteorhacks:npm
 
 

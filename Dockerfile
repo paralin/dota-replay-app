@@ -1,11 +1,8 @@
 FROM node:0.10.42-wheezy
-RUN apt-get update && apt-get install build-essential -y && apt-get clean
-RUN curl https://install.meteor.com/ | sh
 
-ADD . /build/
-RUN cd /build && rm -rf /build/packages/npm-container/.npm/package && meteor build --directory /bundle/ && \
-    rm -rf /build && mkdir /app/ && mv /bundle/bundle/* /app/ && rm -rf /bundle/ && \
-    cd /app/programs/server/ && npm install && rm -rf /root/.meteor/
+ENV METEOR_ALLOW_SUPERUSER yes
+ADD ./bundle/bundle /app
+RUN ls /app && cd /app/programs/server/ && npm install && rm -rf /root/.meteor/
 
 WORKDIR /app/
 
