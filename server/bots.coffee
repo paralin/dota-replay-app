@@ -2,11 +2,6 @@ util =  Meteor.npmRequire "util"
 fs =    Meteor.npmRequire "fs"
 request =  Meteor.npmRequire "request"
 
-API_URL = process.env.API_URL
-unless API_URL?
-  console.log "API_URL must be set in environment for replay fetching"
-  return
-
 getExpiredTime = ->
   # This is when patch 7.0 came out.
   latestCompat = new Date("2016-12-14T23:53:56+00:00")
@@ -96,39 +91,24 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
   # put http calls here
   # set match.match_id to the match id
   try
-    resp = HTTP.call "GET", API_URL, {params: {match_id: sub.matchid, key: process.env.API_SECRET}}
+    resp = HTTP.call "GET", "https://api.opendota.com/api/replays", {params: {match_id: sub.matchid}}
     data = resp.data
-    if data.result is 1 and data.match?
-      match = data.match
+    if data? and data.length and data[0].match_id?
+      match = data[0]
       match.match_id = sub.matchid
       match._id = "#{match.match_id}"
       Results.remove {_id: match._id}
       Results.insert match
       log "finished fetching match details"
       job.done()
-    else if data.match? and data.vote?
-      msg = "result was #{data.result}, failing this replay"
-      Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: data.result}}
-      log msg
-      job.fail JSON.stringify(data), {fatal: true}
     else
-      msg = "result was #{JSON.stringify data}, failing non-fatally"
+      rstr = JSON.stringify data
+      msg = "result was #{rstr}, failing this replay"
+      Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: "Result: #{rstr}"}}
       log msg
-      job.fail msg
+      job.fail rstr, {fatal: true}
   catch e
     aresp = e.response
-    if aresp.statusCode is 500 and aresp.content.substr(0, 1) is "{"
-      try
-        data = JSON.parse aresp.content
-        if data.error?
-          log "DOTA 2 error checking replay: #{JSON.stringify data.error}"
-          if data.error is 15
-            log "Replay is unavailable."
-            Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: 15}}
-            job.fail "Replay is unavailable, code 15.", {fatal: true}
-            return cb()
-      catch ex
-
     msg = "Unable to query the API for match details, #{e}"
     log msg
     job.fail msg

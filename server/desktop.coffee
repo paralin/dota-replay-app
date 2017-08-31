@@ -1,7 +1,7 @@
 WebSocket = Meteor.npmRequire("ws").Server
 jwt = Meteor.npmRequire("jsonwebtoken")
 
-secret = "TDQFAL7KEDCTo0"
+secret = process.env.SECRET
 shownameCache = {}
 
 resolveShowname = (show) ->

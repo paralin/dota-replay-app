@@ -96,6 +96,7 @@ roleSet =
   steamid: ""
   roles: [""]
 
+apiSecret = process.env.API_SECRET
 Router.route('/api/users/roles', { where: 'server' })
   .post ->
     req = _.pick @request.body, _.keys roleSet
@@ -107,7 +108,7 @@ Router.route('/api/users/roles', { where: 'server' })
       if typeof(req[k]) isnt typ
         throwErr @response, 403, "The request property #{k} should be a #{typ}."
         return
-    if req.secret isnt "LOm6HcsSTHZU5g"
+    if req.secret isnt apiSecret
       throwErr @response, 403, "The secret is wrong."
       return
     user = Meteor.users.findOne({"services.steam.id": req.steamid})

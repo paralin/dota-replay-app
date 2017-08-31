@@ -1,0 +1,6 @@
+export API_SECRET=secret
+export ENABLE_CULL_OLD=true
+export ENABLE_CULL_UNKNOWN=1
+export ROOT_URL=http://replay.paral.in
+export MONGODB_URL=mongodb://mongo.replay.svc.cluster.local/replay?replicaSet=rs0
+export MONGO_URL=$MONGODB_URL
