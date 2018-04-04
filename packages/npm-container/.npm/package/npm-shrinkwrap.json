@@ -885,20 +885,7 @@
           "version": "0.1.2",
           "dependencies": {
             "fast-crc32c": {
-              "version": "1.0.1",
-              "dependencies": {
-                "sse4_crc32": {
-                  "version": "4.1.1",
-                  "dependencies": {
-                    "bindings": {
-                      "version": "1.2.1"
-                    },
-                    "nan": {
-                      "version": "2.1.0"
-                    }
-                  }
-                }
-              }
+              "version": "1.0.1"
             }
           }
         },
@@ -1485,28 +1472,6 @@
         },
         "ultron": {
           "version": "1.0.2"
-        },
-        "bufferutil": {
-          "version": "1.0.1",
-          "dependencies": {
-            "bindings": {
-              "version": "1.2.1"
-            },
-            "nan": {
-              "version": "1.6.2"
-            }
-          }
-        },
-        "utf-8-validate": {
-          "version": "1.0.1",
-          "dependencies": {
-            "bindings": {
-              "version": "1.2.1"
-            },
-            "nan": {
-              "version": "1.6.2"
-            }
-          }
         }
       }
     }

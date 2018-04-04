@@ -97,16 +97,16 @@ Template.submissionRow.helpers
     @status < 4
   "iconClass": ->
     if @status is 0
-      "fa fa-circle-o-notch fa-spin"
+      "fab fa-circle-o-notch fa-spin"
     else if @status is 1
-      "fa fa-download"
+      "fab fa-download"
     else if @status is 2
-      "fa fa-send"
+      "fab fa-send"
     else if @status is 3
-      "fa fa-eye"
+      "fab fa-eye"
     else if @status is 4
-      "fa fa-check"
+      "fab fa-check"
     else
-      "fa fa-exclamation-triangle"
+      "fab fa-exclamation-triangle"
   "cannotDelete": ->
     @status is 1 or (@status > 2 and @status isnt 5)

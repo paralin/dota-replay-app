@@ -81,12 +81,12 @@ Template.PanelLayout.rendered = ->
     "use strict"
     $(".collapse").on "show.bs.collapse", ->
       id = $(this).attr("id")
-      $("button.to-collapse[data-target=\"#" + id + "\"]").html "<i class=\"fa fa-chevron-up\"></i>"
+      $("button.to-collapse[data-target=\"#" + id + "\"]").html "<i class=\"fab fa-chevron-up\"></i>"
       return
 
     $(".collapse").on "hide.bs.collapse", ->
       id = $(this).attr("id")
-      $("button.to-collapse[data-target=\"#" + id + "\"]").html "<i class=\"fa fa-chevron-down\"></i>"
+      $("button.to-collapse[data-target=\"#" + id + "\"]").html "<i class=\"fab fa-chevron-down\"></i>"
       return
 
     $(".collapse").on "show.bs.collapse", ->

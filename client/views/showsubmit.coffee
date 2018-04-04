@@ -6,9 +6,9 @@ Template.ShowSubmit.rendered = ->
     .bootstrapValidator
       message: "This value is not valid"
       feedbackIcons:
-        valid: "fa fa-ok"
-        invalid: "fa fa-ban"
-        validating: "fa fa-refresh fa-spin"
+        valid: "fab fa-ok"
+        invalid: "fab fa-ban"
+        validating: "fab fa-refresh fa-spin"
       fields:
         description:
           message: "This field is not valid."
