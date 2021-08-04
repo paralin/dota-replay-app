@@ -104,7 +104,7 @@ jobQueue.processJobs "getMatchDetails", {concurrency: 2, payload: 1, prefetch: 2
     else
       rstr = JSON.stringify data
       msg = "result was #{rstr}, failing this replay"
-      Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: "Result: #{rstr}"}}
+      Submissions.update {_id: sub._id}, {$set: {status: 5, fetch_error: -5, fetch_error_replay_state: "Result: #{rstr}"}}
       log msg
       job.fail rstr, {fatal: true}
   catch e
